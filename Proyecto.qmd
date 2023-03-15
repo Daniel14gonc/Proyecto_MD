@@ -1,0 +1,49 @@
+---
+title: "Proyecto"
+author: "Diego Franco, Daniel Gonzalez, Angel Carrera"
+format: html
+editor: visual
+---
+
+```{r}
+datos <- read.csv("defunciones_fetales.csv")
+```
+
+## Defunciones fetales en Guatemala
+
+### 1. Resumen del conjunto de datos.  
+
+El conjunto de datos está compuesto por `r nrow(datos)` filas
+y `r ncol(datos)` columnas.
+
+```{r}
+summary(datos)
+```
+
+### 2. Tipo de cada una de las variables de dataset.  
+
+DEPREG (Departamento de registro) -> Categórica nominal
+MUPREG (Municipio de registro) -> Categórica nominal
+MESREG (Mes de registro) -> Categórica nominal
+AÑOREG (Año de registro) -> Categórica n
+DEPOCU (Departamento de ocurrencia) -> Categórica nominal
+MUPOCU (Municipio de ocurrencia) -> Categórica nominal
+SEXO (de la defunción fetal) -> Categórica nominal
+DIAOCU (Día de ocurrencia) -> Categórica nominal
+MESOCU (Mes de ocurrencia) -> Categórica nominal
+TIPAR (Tipo de parto) -> Categórica nominal
+CLAPAR (Clase de parto) -> Categórica nominal
+VIAPAR (Via del parto) -> Categórica nominal
+SEMGES (Semanas de gestación) -> Cuantitativa discreta
+EDADM (Edad de la madre) -> Cuantitativa discreta
+DEPREM (Departamento de residencia de la madre) -> Categórica nominal
+MUPREM (Municipio de residencia de la madre) -> Categórica nominal
+ESCIVM (Estado civil de la madre) -> Categórica nominal
+NACIOM (Nacionalidad de la madre) -> Categórica nominal
+ESCOLAM (Escoladirdad de la madre) -> Categórica nominal
+CAUDEF (Causa de defunción) -> Categórica nominal
+ASISREC (Asistencia recibida) -> Categórica nominal
+SITIOOCU (Sitio de ocurrencia) -> Categórica nominal
+TOHITE (Total de hijos tenidos) -> Cuantitativa discreta
+TOHINM (Total de hijos nacidos muertos) -> Cuantitativa discreta
+TOHIVI (Total de hijos vivos) -> Cuantitativa discreta
