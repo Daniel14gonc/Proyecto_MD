@@ -5,7 +5,7 @@ format: html
 editor: visual
 ---
 
-```{r echo=F}
+```{r echo=F, include=FALSE}
 library(nortest)
 library(dplyr)
 library(hopkins)
@@ -46,10 +46,6 @@ y `r ncol(datos)` columnas.
 
 ```{r}
 summary(datos)
-numericas <- c("SEMGES", "EDADM", "TOHITE", "TOHINM", "TOHIVI")
-cualitativas <- datos[, !(names(datos) %in% numericas)]
-datos <- datos %>% mutate_at(colnames(cualitativas), function(x) as.factor(x))
-datos <- mutate_if(datos, is.numeric, scale)
 ```
 
 ### 2. Tipo de cada una de las variables de dataset.  
@@ -82,7 +78,7 @@ datos <- mutate_if(datos, is.numeric, scale)
 
 ### 3. Analisis de las variables
 
-### 3.5 Análsis de NA
+### 3.1 Análsis de NA
 
 ```{r echo=F}
 colSums(is.na(datos))
@@ -109,7 +105,7 @@ datos$TOHINM <- ifelse(datos$TOHINM == 99, NA, datos$TOHINM)
 datos$TOHIVI <- ifelse(datos$TOHIVI == 99, NA, datos$TOHIVI)
 ```
 
-### 3.1 Análisis de normalidad varibales cuantitativas
+### 3.2 Análisis de normalidad varibales cuantitativas
 
 ### Prueba de normalidad para **SEMGES**.  
   
@@ -239,7 +235,7 @@ lillie.test(hijos_vivos$TOHIVI)
 ```
 El valor de p es mucho menor que el nivel de significancia, por lo que se rechaza la hipótesis de que se tiene una distribución normal.
 
-### 3.2 Análisis de distribución de variables cuantitativas
+### 3.3 Análisis de distribución de variables cuantitativas
 
 #### Análisis para semana de gestación
 ```{r echo=F}
@@ -301,7 +297,7 @@ boxplot(hijos_vivos$TOHIVI,
 ```
 Se puede observar que el 50% de los datos están por debajo de aproximadamente 2 hijos. Se tienen muchos datos atípicos y hay bastante dispersión en la distribución. El valor menor de hijos vivos es de 0 y hay personas que tienen más de 15 hijos vivos.
 
-### 3.3 Análisis de frecuencia varibales cualitativas
+### 3.4 Análisis de frecuencia varibales cualitativas
 
 A continuación se muestra la frecuencia de **DEPREG** el departamento de registro.
 ```{r echo=F}
@@ -358,7 +354,7 @@ sexo <- table(datos$SEXO)
 sexo
 barplot(sexo, col=c("orange", "blue"))
 ```
-La gráfica muestra que el sexo de la defuncion fetal mayor mente son masculinos.
+La gráfica muestra que el sexo de la defuncion fetal mayormente son masculinos.
 
 A continuación se muestra la frecuencia de **DIAOCU** el dia de ocurrencia.
 ```{r echo=F}
@@ -406,7 +402,7 @@ depM <- table(datos$DEPREM)
 depM
 barplot(depM, col=c("orange", "blue"))
 ```
-La gráfica muestra que la mayoria de las madres son recidentes del departamento de Guatemala.
+La gráfica muestra que la mayoria de las madres son residentes del departamento de Guatemala.
 
 A continuación se muestra la frecuencia de **MUPREM** el municipio de residencia de la madre.
 ```{r echo=F}
@@ -414,7 +410,7 @@ munM <- table(datos$MUPREM)
 munM
 barplot(munM, col=c("orange", "blue"))
 ```
-La gráfica muestra que la mayoria de las madres son recidentes del municipio de Guatemala.
+La gráfica muestra que la mayoria de las madres son residentes del municipio de Guatemala.
 
 A continuación se muestra la frecuencia de **ESCIVM** el estado civil de la madre.
 ```{r echo=F}
@@ -467,41 +463,105 @@ Al observar el grafico podemos observar que la mayoria de los abortos ocurrieron
 
 ### 3.4 Matriz de correlación entre variables
 ```{r echo=F}
+numericas <- c("SEMGES", "EDADM", "TOHITE", "TOHINM", "TOHIVI")
+cualitativas <- datos[, !(names(datos) %in% numericas)]
+datosT <- datos %>% mutate_at(colnames(cualitativas), function(x) as.factor(x))
+datosT <- mutate_if(datos, is.numeric, scale)
 numericas_norm <- datos[, numericas]
-head(numericas_norm)
+numericas_norm <- numericas_norm[complete.cases(numericas_norm), ]
 corr_matrix <- cor(numericas_norm)
 corrplot(corr_matrix)
 ```
 
+### 4. Preguntas de investigacion
 
-
-
-## Preguntas de investigacion
-
-### 1. ¿Cual es la edad promedio de las madres que abortan?
+### 4.1. ¿Cual es la edad promedio de las madres que abortan?
 ```{r echo=F}
 edad <- datos$EDADM
-mean(edad)
-
-
+mean(edad, na.rm = T)
 ```
+La edad promedio de las madres que abortan es de 27.
 
-### 2. ¿Existe algún patrón temporal en las defunciones fetales?
+### 4.2. ¿Existe algún patrón temporal en las defunciones fetales?
 ```{r echo=F}
 time_df <- datos
 time_df$fecha <- as.Date(paste(time_df$AÑOREG, time_df$MESREG, '01', sep='-'), format = "%Y-%m-%d")
-head(time_df$fecha)
 table <- table(time_df$fecha)
 min_date <- min(time_df$fecha)
 max_date <- max(time_df$fecha)
-table
-ts_counts <- ts(table, start = c(year(min_date), month(min_date)), end = c(year(max_date), month(max_date)), frequency = 12)
+ts_counts <- ts(table, start = c(year(min_date), month(min_date)), frequency = 12)
 
-plot.ts(ts_counts, main = "Time Series Plot", xlab = "Date", ylab = "Value")
+plot.ts(ts_counts, main = "Serie de tiempo de defunciones fetales", xlab = "Fecha", ylab = "Cantidad")
 
 fit <- decompose(ts_counts)
-#fit <- decompose(data_serie, type='multiplicative')
-
-# Para graficar esta descomposición volvemos a emplear la funcion autoplot, pero con el objeto fit
 plot(fit)
 ```
+
+Al observar la serie de tiempo se puede observar que hay una tendencia en la reducción de la cantidad de defunciones fetales a lo largo de los años. Un factor importante por notar es que existe una estacionalidad marcada en las defunciones fetales, se puede visualizar un ciclo en la cantidad de estas.
+
+## 5. Clustering
+
+### 5.1 Determinar si vale la pena agrupar
+
+```{r echo=F}
+set.seed(123)
+
+h<-hopkins(numericas_norm)
+distancia <- dist(numericas_norm)
+
+# fviz_dist(distancia, show_labels = F)
+```
+Se calculó el estadístico de Hopkins para determinar si es válido agrupar los datos. El valor de este es de `r round(h, 2)`, por lo que si vale la pena intentar un agrupamiento.
+
+### 5.2 Determinar la cantidad de grupos para el cluster
+
+#### Metodo de wss y silueta
+
+```{r echo=F, metodo_wss}
+
+set.seed(123)
+
+wss <- 0
+
+wss <- 0
+for (i in 1:10) {
+  wss[i] <- sum(kmeans(numericas_norm, centers=i)$withinss)
+}
+
+## 5.4 Grafica de lineas y puntos bow
+plot(1:10, wss, type="bow", xlab="Cantidad de grupos", ylab="wss")
+
+#fviz_nbclust(numericas_norm, kmeans, method="wss")
+fviz_nbclust(numericas_norm, kmeans, method="silhouette")
+```
+Es posible observar de la gráfica del codo que la cantidad de grupos óptima son 3. La silueta indica lo mismo, así que se procederá a realizar esta cantidad.
+
+### 5.3 Por k medias
+
+#### 5.3.1 Agrupamiento
+```{r kmedias}
+set.seed(123)
+km <- kmeans(numericas_norm, centers = 3, iter.max = 100)
+
+# find number of observations in each cluster
+table(km$cluster)
+```
+
+```{r}
+fviz_cluster(km, numericas_norm)
+```
+
+#### 5.3.2 Calidad del agrupamiento segun el método de la silueta
+```{r}
+set.seed(123)
+m <- data.frame(withinss = km$withinss, size = km$size)
+ggplot(m, aes(size, withinss)) +
+    geom_point() +
+    geom_smooth(method = "lm") +
+    labs(x = "cardinalidad (size)", y = "magnitud (whithinss)") +
+    geom_text_repel(label = rownames(m))
+silueta <- silhouette(km$cluster, distancia)
+mean <- mean(silueta[, 3])
+mean
+```
+La silueta es de `r round(mean, 2)`, lo cual es un valor relativamente alto que indica que con 3 grupos se genera un agrupamiento aceptable.
