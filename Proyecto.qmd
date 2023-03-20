@@ -7,6 +7,29 @@ editor: visual
 
 ```{r echo=F}
 library(nortest)
+library(dplyr)
+library(hopkins)
+library(factoextra)
+library(ggrepel)
+library(cluster)
+library(flexclust)
+library(FeatureImpCluster)
+library(stringr)
+library(tidyr)
+library(stats)
+library(graphics)
+library(NbClust)
+library(mclust)
+library(GGally)
+library(corrplot)
+library(caret)
+library(ggplot2)
+library(kableExtra)
+library(e1071)
+library(rpart)
+library(rpart.plot)
+library(naivebayes)
+library(randomForest)
 ```
 
 
@@ -23,6 +46,10 @@ y `r ncol(datos)` columnas.
 
 ```{r}
 summary(datos)
+numericas <- c("SEMGES", "EDADM", "TOHITE", "TOHINM", "TOHIVI")
+cualitativas <- datos[, !(names(datos) %in% numericas)]
+datos <- datos %>% mutate_at(colnames(cualitativas), function(x) as.factor(x))
+datos <- mutate_if(datos, is.numeric, scale)
 ```
 
 ### 2. Tipo de cada una de las variables de dataset.  
@@ -436,3 +463,45 @@ sitio
 barplot(sitio, col=c("orange", "blue"))
 ```
 Al observar el grafico podemos observar que la mayoria de los abortos ocurrieron en un Hospital publico.
+
+
+### 3.4 Matriz de correlación entre variables
+```{r echo=F}
+numericas_norm <- datos[, numericas]
+head(numericas_norm)
+corr_matrix <- cor(numericas_norm)
+corrplot(corr_matrix)
+```
+
+
+
+
+## Preguntas de investigacion
+
+### 1. ¿Cual es la edad promedio de las madres que abortan?
+```{r echo=F}
+edad <- datos$EDADM
+mean(edad)
+
+
+```
+
+### 2. ¿Existe algún patrón temporal en las defunciones fetales?
+```{r echo=F}
+time_df <- datos
+time_df$fecha <- as.Date(paste(time_df$AÑOREG, time_df$MESREG, '01', sep='-'), format = "%Y-%m-%d")
+head(time_df$fecha)
+table <- table(time_df$fecha)
+min_date <- min(time_df$fecha)
+max_date <- max(time_df$fecha)
+table
+ts_counts <- ts(table, start = c(year(min_date), month(min_date)), end = c(year(max_date), month(max_date)), frequency = 12)
+
+plot.ts(ts_counts, main = "Time Series Plot", xlab = "Date", ylab = "Value")
+
+fit <- decompose(ts_counts)
+#fit <- decompose(data_serie, type='multiplicative')
+
+# Para graficar esta descomposición volvemos a emplear la funcion autoplot, pero con el objeto fit
+plot(fit)
+```

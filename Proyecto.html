@@ -131,10 +131,115 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </header>
 
 <div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
 
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: ggplot2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: grid</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: lattice</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: modeltools</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: stats4</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: data.table</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'data.table'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:dplyr':
+
+    between, first, last</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Package 'mclust' version 6.0.0
+Type 'citation("mclust")' for citing this R package in publications.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'GGally':
+  method from   
+  +.gg   ggplot2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>corrplot 0.92 loaded</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'kableExtra'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    group_rows</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'e1071'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:flexclust':
+
+    bclust</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>naivebayes 0.9.7 loaded</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'naivebayes'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:data.table':
+
+    tables</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>randomForest 4.7-1.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Type rfNews() to see new features/changes/bug fixes.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'randomForest'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:ggplot2':
+
+    margin</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    combine</code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"defunciones_fetales.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"defunciones_fetales.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="defunciones-fetales-en-guatemala" class="level2">
 <h2 class="anchored" data-anchor-id="defunciones-fetales-en-guatemala">Defunciones fetales en Guatemala</h2>
@@ -142,7 +247,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="resumen-del-conjunto-de-datos.">1. Resumen del conjunto de datos.</h3>
 <p>El conjunto de datos está compuesto por 31228 filas y 25 columnas.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(datos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(datos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     DEPREG           MUPREG           MESREG           AÑOREG    
  Min.   : 1.000   Min.   : 101.0   Min.   : 1.000   Min.   :2010  
@@ -193,6 +298,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  Max.   :5.000   Max.   :9.000   Max.   :99.0   Max.   :99.00   Max.   :99.00  
                                  NA's   :351    NA's   :142     NA's   :258    </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>numericas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"SEMGES"</span>, <span class="st">"EDADM"</span>, <span class="st">"TOHITE"</span>, <span class="st">"TOHINM"</span>, <span class="st">"TOHIVI"</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>cualitativas <span class="ot">&lt;-</span> datos[, <span class="sc">!</span>(<span class="fu">names</span>(datos) <span class="sc">%in%</span> numericas)]</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span> <span class="fu">mutate_at</span>(<span class="fu">colnames</span>(cualitativas), <span class="cf">function</span>(x) <span class="fu">as.factor</span>(x))</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">mutate_if</span>(datos, is.numeric, scale)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="tipo-de-cada-una-de-las-variables-de-dataset." class="level3">
@@ -258,11 +367,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell-output cell-output-stdout">
 <pre><code>  DEPREG   MUPREG   MESREG   AÑOREG   DEPOCU   MUPOCU     SEXO   DIAOCU 
        0        0        0        0        0        0        0        0 
-  MESOCU    TIPAR   CLAPAR   VIAPAR   SEMGES    EDADM   DEPREM   MUPREM 
+  MESOCU    TIPAR   CLAPAR   VIAPAR                     DEPREM   MUPREM 
        0        0        0        0        0        0        0        0 
-  ESCIVM   NACIOM  ESCOLAM   CAUDEF  ASISREC SITIOOCU   TOHITE   TOHINM 
+  ESCIVM   NACIOM  ESCOLAM   CAUDEF  ASISREC SITIOOCU                   
        0        0        0        0        0        0      351      142 
-  TOHIVI 
+         
      258 </code></pre>
 </div>
 </div>
@@ -298,7 +407,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     Lilliefors (Kolmogorov-Smirnov) normality test
 
 data:  semana_ges$SEMGES
-D = 0.18349, p-value &lt; 2.2e-16</code></pre>
+D = 0.39638, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>Es posible observar que el valor p es muy pequeño, mucho menor que el nivel de significancia de 0.05. Por lo tanto, se puede afirmar que la distribución de los datos no es normal.</p>
@@ -326,7 +435,7 @@ D = 0.18349, p-value &lt; 2.2e-16</code></pre>
     Lilliefors (Kolmogorov-Smirnov) normality test
 
 data:  edad_madre$EDADM
-D = 0.081785, p-value &lt; 2.2e-16</code></pre>
+D = 0.49822, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>Se puede observar que el valor p es mucho menor al nivel de significancia, que es de 0.05, por lo que se puede afirmar que la distribución no sigue una distribución normal.</p>
@@ -354,7 +463,7 @@ D = 0.081785, p-value &lt; 2.2e-16</code></pre>
     Lilliefors (Kolmogorov-Smirnov) normality test
 
 data:  hijos_tenidos$TOHITE
-D = 0.19948, p-value &lt; 2.2e-16</code></pre>
+D = 0.32913, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>Es posible observar que el valor de p es mucho más bajo al nivel de significancia. Se puede afirmar que la distribución no sigue una forma normal.</p>
@@ -382,7 +491,7 @@ D = 0.19948, p-value &lt; 2.2e-16</code></pre>
     Lilliefors (Kolmogorov-Smirnov) normality test
 
 data:  hijos_muertos$TOHINM
-D = 0.46917, p-value &lt; 2.2e-16</code></pre>
+D = 0.4327, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>Se puede observar que el valor p es mucho menor que el nivel de significancia, de 0.05, por lo que se rechaza la hipótesis de que la distribución es normal.</p>
@@ -409,7 +518,7 @@ D = 0.46917, p-value &lt; 2.2e-16</code></pre>
     Lilliefors (Kolmogorov-Smirnov) normality test
 
 data:  hijos_vivos$TOHIVI
-D = 0.23639, p-value &lt; 2.2e-16</code></pre>
+D = 0.37372, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>El valor de p es mucho menor que el nivel de significancia, por lo que se rechaza la hipótesis de que se tiene una distribución normal.</p>
@@ -446,6 +555,10 @@ D = 0.23639, p-value &lt; 2.2e-16</code></pre>
 <section id="análisis-para-total-de-hijos-fallecidos" class="level4">
 <h4 class="anchored" data-anchor-id="análisis-para-total-de-hijos-fallecidos">Análisis para total de hijos fallecidos</h4>
 <div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in (function (z, notch = FALSE, width = NULL, varwidth = FALSE, : some
+notches went outside hinges ('box'): maybe set notch=FALSE</code></pre>
+</div>
 <div class="cell-output-display">
 <p><img src="Proyecto_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -814,6 +927,88 @@ D = 0.23639, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>Al observar el grafico podemos observar que la mayoria de los abortos ocurrieron en un Hospital publico.</p>
+</section>
+<section id="matriz-de-correlación-entre-variables" class="level3">
+<h3 class="anchored" data-anchor-id="matriz-de-correlación-entre-variables">3.4 Matriz de correlación entre variables</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       SEMGES      EDADM   TOHITE   TOHINM   TOHIVI
+1 -0.03293224 -0.2069471 1.150685 1.694629 1.419238
+2 -0.30279653 -0.2012385 1.150685 1.694629 1.419238
+3 -0.66261560 -0.1784042 1.150685 1.694629 1.419238
+4 -0.43772868 -0.1669871 1.150685 1.694629 1.419238
+5 -0.43772868 -0.1669871 1.150685 1.694629 1.419238
+6  2.53077860 -0.1898214 1.150685 1.694629 1.419238</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="Proyecto_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="preguntas-de-investigacion" class="level2">
+<h2 class="anchored" data-anchor-id="preguntas-de-investigacion">Preguntas de investigacion</h2>
+<section id="cual-es-la-edad-promedio-de-las-madres-que-abortan" class="level3">
+<h3 class="anchored" data-anchor-id="cual-es-la-edad-promedio-de-las-madres-que-abortan">1. ¿Cual es la edad promedio de las madres que abortan?</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.416191e-17</code></pre>
+</div>
+</div>
+</section>
+<section id="existe-algún-patrón-temporal-en-las-defunciones-fetales" class="level3">
+<h3 class="anchored" data-anchor-id="existe-algún-patrón-temporal-en-las-defunciones-fetales">2. ¿Existe algún patrón temporal en las defunciones fetales?</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "2019-01-01" "2019-03-01" "2019-04-01" "2019-05-01" "2019-06-01"
+[6] "2019-06-01"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+2010-01-01 2010-02-01 2010-03-01 2010-04-01 2010-05-01 2010-06-01 2010-07-01 
+       239        262        271        260        276        263        279 
+2010-08-01 2010-09-01 2010-10-01 2010-11-01 2010-12-01 2011-01-01 2011-02-01 
+       292        283        283        337        287        316        254 
+2011-03-01 2011-04-01 2011-05-01 2011-06-01 2011-07-01 2011-08-01 2011-09-01 
+       289        252        297        268        266        294        245 
+2011-10-01 2011-11-01 2011-12-01 2012-01-01 2012-02-01 2012-03-01 2012-04-01 
+       264        278        250        254        296        252        254 
+2012-05-01 2012-06-01 2012-07-01 2012-08-01 2012-09-01 2012-10-01 2012-11-01 
+       238        243        273        304        221        264        277 
+2012-12-01 2013-01-01 2013-02-01 2013-03-01 2013-04-01 2013-05-01 2013-06-01 
+       261        295        251        238        318        289        250 
+2013-07-01 2013-08-01 2013-09-01 2013-10-01 2013-11-01 2013-12-01 2014-01-01 
+       301        254        308        282        259        295        311 
+2014-02-01 2014-03-01 2014-04-01 2014-05-01 2014-06-01 2014-07-01 2014-08-01 
+       227        271        260        265        254        319        265 
+2014-09-01 2014-10-01 2014-11-01 2014-12-01 2015-01-01 2015-02-01 2015-03-01 
+       248        289        262        258        325        253        246 
+2015-04-01 2015-05-01 2015-06-01 2015-07-01 2015-08-01 2015-09-01 2015-10-01 
+       236        276        257        290        242        235        226 
+2015-11-01 2015-12-01 2016-01-01 2016-02-01 2016-03-01 2016-04-01 2016-05-01 
+       250        287        275        270        270        267        278 
+2016-06-01 2016-07-01 2016-08-01 2016-09-01 2016-10-01 2016-11-01 2016-12-01 
+       236        238        273        286        276        257        237 
+2017-01-01 2017-02-01 2017-03-01 2017-04-01 2017-05-01 2017-06-01 2017-07-01 
+       270        210        237        244        265        240        267 
+2017-08-01 2017-09-01 2017-10-01 2017-11-01 2017-12-01 2018-01-01 2018-02-01 
+       262        245        264        296        233        283        240 
+2018-03-01 2018-04-01 2018-05-01 2018-06-01 2018-07-01 2018-08-01 2018-09-01 
+       225        244        259        217        246        230        222 
+2018-10-01 2018-11-01 2018-12-01 2019-01-01 2019-02-01 2019-03-01 2019-04-01 
+       274        229        193        243        223        220        231 
+2019-05-01 2019-06-01 2019-07-01 2019-08-01 2019-09-01 2019-10-01 2019-11-01 
+       233        202        251        228        216        233        204 
+2019-12-01 2020-01-01 2020-02-01 2020-03-01 
+       185         52         11          4 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="Proyecto_files/figure-html/unnamed-chunk-48-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="Proyecto_files/figure-html/unnamed-chunk-48-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 </section>
 </section>
 
