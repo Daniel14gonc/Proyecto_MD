@@ -1,0 +1,4 @@
+1,Soltera
+2,Casada
+3,Unida
+9,Ignorado

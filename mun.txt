@@ -1,0 +1,340 @@
+0101,Guatemala
+0102,Santa Catarina Pinula
+0103,San Jose Pinula
+0104,San Jose del Golfo
+0105,Palencia
+0106,Chinautla
+0107,San Pedro Ayampuc
+0108,Mixco
+0109,San Pedro Sacatepequez
+0110,San Juan Sacatepequez
+0111,San Raymundo
+0112,Chuarrancho
+0113,Fraijanes
+0114,Amatitlan
+0115,Villa Nueva
+0116,Villa Canales
+0117,Petapa
+0201,Guastatoya
+0202,Morazan
+0203,San Agustin Acasaguastlan
+0204,San Cristobal Acasaguastlan
+0205,El Jicaro
+0206,Sansare
+0207,Sanarate
+0208,San Antonio la Paz
+0301,Antigua Guatemala
+0302,Jocotenango
+0303,Pastores
+0304,Sumpango
+0305,Santo Domingo Xenacoj
+0306,Santiago Sacatepequez
+0307,San Bartolome Milpas Altas
+0308,San Lucas Sacatepequez
+0309,Santa Lucia Milpas Altas
+0310,Magdalena Milpas Altas
+0311,Santa Maria de Jesus
+0312,Ciudad Vieja
+0313,San Miguel Dueñas
+0314,Alotenango
+0315,San Antonio Aguas Calientes
+0316,Santa Catarina Barahona
+0401,Chimaltenango
+0402,San Jose Poaquil
+0403,San Martin Jilotepeque
+0404,Comalapa
+0405,Santa Apolonia
+0406,Tecpan Guatemala
+0407,Patzun
+0408,Pochuta
+0409,Patzicia
+0410,Santa Cruz Balanya
+0411,Acatenango
+0412,Yepocapa
+0413,San Andres Itzapa
+0414,Parramos
+0415,Zaragoza
+0416,El Tejar
+0501,Escuintla
+0502,Santa Lucia Cotzumalguapa
+0503,La Democracia
+0504,Siquinala
+0505,Masagua
+0506,Tiquisate
+0507,La Gomera
+0508,Guanagazapa
+0509,San Jose
+0510,Iztapa
+0511,Palin
+0512,San Vicente Pacaya
+0513,Nueva Concepcion
+0514,Sipacate
+0601,Cuilapa
+0602,Barberena
+0603,Santa Rosa de Lima
+0604,Casillas
+0605,San Rafael las Flores
+0606,Oratorio
+0607,San Juan Tecuaco
+0608,Chiquimulilla
+0609,Taxisco
+0610,Santa Maria Ixhuatan
+0611,Guazacapan
+0612,Santa Cruz Naranjo
+0613,Pueblo Nuevo Viñas
+0614,Nueva Santa Rosa
+0701,Solola
+0702,San Jose Chacaya
+0703,Santa Maria Visitacion
+0704,Santa Lucia Utatlan
+0705,Nahuala
+0706,Santa Catarina Ixtahuacan
+0707,Santa Clara la Laguna
+0708,Concepcion
+0709,San Andres Semetabaj
+0710,Panajachel
+0711,Santa Catarina Palopo
+0712,San Antonio Palopo
+0713,San Lucas Toliman
+0714,Santa Cruz la Laguna
+0715,San Pablo la Laguna
+0716,San Marcos la Laguna
+0717,San Juan la Laguna
+0718,San Pedro la Laguna
+0719,Santiago Atitlan
+0801,Totonicapan
+0802,San Cristobal Totonicapan
+0803,San Francisco el Alto
+0804,San Andres Xecul
+0805,Momostenango
+0806,Santa Maria Chiquimula
+0807,Santa Lucia la Reforma
+0808,San Bartolo
+0901,Quetzaltenango
+0902,Salcaja
+0903,Olintepeque
+0904,San Carlos Sija
+0905,Sibilia
+0906,Cabrican
+0907,Cajola
+0908,San Miguel Siguila
+0909,Ostuncalco
+0910,San Mateo
+0911,Concepcion Chiquirichapa
+0912,San Martin Sacatepequez
+0913,Almolonga
+0914,Cantel
+0915,Huitan
+0916,Zunil
+0917,Colomba
+0918,San Francisco la Union
+0919,El Palmar
+0920,Coatepeque
+0921,Genova
+0922,Flores Costa Cuca
+0923,La Esperanza
+0924,Palestina de los Altos
+1001,Mazatenango
+1002,Cuyotenango
+1003,San Francisco Zapotitlan
+1004,San Bernardino
+1005,San Jose el Idolo
+1006,Santo Domingo Suchitepequez
+1007,San Lorenzo
+1008,Samayac
+1009,San Pablo Jocopilas
+1010,San Antonio Suchitepequez
+1011,San Miguel Panan
+1012,San Gabriel
+1013,Chicacao
+1014,Patulul
+1015,Santa Barbara
+1016,San Juan Bautista
+1017,Santo Tomas la Union
+1018,Zunilito
+1019,Pueblo Nuevo
+1020,Rio Bravo
+1021,San Jose La Maquina
+1101,Retalhuleu
+1102,San Sebastian
+1103,Santa Cruz Mulua
+1104,San Martin Zapotitlan
+1105,San Felipe
+1106,San Andres Villa Seca
+1107,Champerico
+1108,Nuevo San Carlos
+1109,El Asintal
+1201,San Marcos
+1202,San Pedro Sacatepequez
+1203,San Antonio Sacatepequez
+1204,Comitancillo
+1205,San Miguel Ixtahuacan
+1206,Concepcion Tutuapa
+1207,Tacana
+1208,Sibinal
+1209,Tajumulco
+1210,Tejutla
+1211,San Rafael Pie de la Cuesta
+1212,Nuevo Progreso
+1213,El Tumbador
+1214,El Rodeo
+1215,Malacatan
+1216,Catarina
+1217,Ayutla
+1218,Ocos
+1219,San Pablo
+1220,El Quetzal
+1221,La Reforma
+1222,Pajapita
+1223,Ixchiguan
+1224,San Jose Ojetenan
+1225,San Cristobal Cucho
+1226,Sipacapa
+1227,Esquipulas Palo Gordo
+1228,Rio Blanco
+1229,San Lorenzo
+1230,La Blanca
+1301,Huehuetenango
+1302,Chiantla
+1303,Malacatancito
+1304,Cuilco
+1305,Nenton
+1306,San Pedro Necta
+1307,Jacaltenango
+1308,Soloma
+1309,Ixtahuacan
+1310,Santa Barbara
+1311,La Libertad
+1312,La Democracia
+1313,San Miguel Acatan
+1314,San Rafael la Independencia
+1315,Todos Santos Cuchumatan
+1316,San Juan Atitan
+1317,Santa Eulalia
+1318,San Mateo Ixtatan
+1319,Colotenango
+1320,San Sebastian Huehuetenango
+1321,Tectitan
+1322,Concepcion Huista
+1323,San Juan Ixcoy
+1324,San Antonio Huista
+1325,San Sebastian Coatan
+1326,Barillas
+1327,Aguacatan
+1328,San Rafael Petzal
+1329,San Gaspar Ixchil
+1330,Santiago Chimaltenango
+1331,Santa Ana Huista
+1332,Union Cantinil
+1333,Petatan
+1401,Santa Cruz del Quiche
+1402,Chiche
+1403,Chinique
+1404,Zacualpa
+1405,Chajul
+1406,Chichicastenango
+1407,Patzite
+1408,San Antonio Ilotenango
+1409,San Pedro Jocopilas
+1410,Cunen
+1411,San Juan Cotzal
+1412,Joyabaj
+1413,Nebaj
+1414,San Andres Sajcabaja
+1415,Uspantan
+1416,Sacapulas
+1417,San Bartolome Jocotenango
+1418,Canilla
+1419,Chicaman
+1420,Ixcan
+1421,Pachalum
+1501,Salama
+1502,San Miguel Chicaj
+1503,Rabinal
+1504,Cubulco
+1505,Granados
+1506,El Chol
+1507,San Jeronimo
+1508,Purulha
+1601,Coban
+1602,Santa Cruz Verapaz
+1603,San Cristobal Verapaz
+1604,Tactic
+1605,Tamahu
+1606,Tucuru
+1607,Panzos
+1608,Senahu
+1609,San Pedro Carcha
+1610,San Juan Chamelco
+1611,Lanquin
+1612,Cahabon
+1613,Chisec
+1614,Chahal
+1615,Fray Bartolome de las Casas
+1616,Santa Catalina la Tinta
+1617,Raxruha
+1701,Flores
+1702,San Jose
+1703,San Benito
+1704,San Andres
+1705,La Libertad
+1706,San Francisco
+1707,Santa Ana
+1708,Dolores
+1709,San Luis
+1710,Sayaxche
+1711,Melchor de Mencos
+1712,Poptun
+1713,Las Cruces
+1714,El Chal
+1801,Puerto Barrios
+1802,Livingston
+1803,El Estor
+1804,Morales
+1805,Los Amates
+1901,Zacapa
+1902,Estanzuela
+1903,Rio Hondo
+1904,Gualan
+1905,Teculutan
+1906,Usumatlan
+1907,Cabañas
+1908,San Diego
+1909,La Union
+1910,Huite
+1911,San Jorge
+2001,Chiquimula
+2002,San Jose La Arada
+2003,San Juan Ermita
+2004,Jocotan
+2005,Camotan
+2006,Olopa
+2007,Esquipulas
+2008,Concepcion Las Minas
+2009,Quetzaltepeque
+2010,San Jacinto
+2011,Ipala
+2101,Jalapa
+2102,San Pedro Pinula
+2103,San Luis Jilotepeque
+2104,San Manuel Chaparron
+2105,San Carlos Alzatate
+2106,Monjas
+2107,Mataquescuintla
+2201,Jutiapa
+2202,El Progreso
+2203,Santa Catarina Mita
+2204,Agua Blanca
+2205,Asuncion Mita
+2206,Yupiltepeque
+2207,Atescatempa
+2208,Jerez
+2209,El Adelanto
+2210,Zapotitlan
+2211,Comapa
+2212,Jalpatagua
+2213,Conguaco
+2214,Moyuta
+2215,Pasaco
+2216,San Jose Acatempa
+2217,Quesada

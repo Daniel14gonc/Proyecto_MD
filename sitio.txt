@@ -1,0 +1,9 @@
+1,Hospital publico
+2,Hospital privado
+3,Centro de salud
+4,Seguro social
+5,Via publica
+6,Domicilio
+7,Lugar de trabajo
+8,Otro
+9,Ignorado

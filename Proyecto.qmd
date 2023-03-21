@@ -271,7 +271,7 @@ boxplot(hijos_tenidos$TOHITE,
   notch = TRUE
 )
 ```
-Es posible observar que el 50% de los datos se enceuntran por debajo de los 3 hijos aproximadamente. Se puede observar una gran cantidad de datos atípicos. La menor cantidad de hijos tenidos es 1. Hay bastante dispersión después del tercer cuartil.
+Es posible observar que el 50% de los datos se enceuntran por debajo de los 3 hijos aproximadamente. Se puede observar una gran cantidad de datos atípicos. La menor cantidad de hijos tenidos es 1. Hay bastante dispersión después del tercer cuartil. Existe un registro que tiene 32 hijos tenidos, el valor más atípico.
 
 #### Análisis para total de hijos fallecidos
 ```{r echo=F}
@@ -468,6 +468,7 @@ cualitativas <- datos[, !(names(datos) %in% numericas)]
 datosT <- datos %>% mutate_at(colnames(cualitativas), function(x) as.factor(x))
 datosT <- mutate_if(datos, is.numeric, scale)
 numericas_norm <- datos[, numericas]
+numericas_temp <- numericas_norm
 numericas_norm <- numericas_norm[complete.cases(numericas_norm), ]
 corr_matrix <- cor(numericas_norm)
 corrplot(corr_matrix)
@@ -565,3 +566,94 @@ mean <- mean(silueta[, 3])
 mean
 ```
 La silueta es de `r round(mean, 2)`, lo cual es un valor relativamente alto que indica que con 3 grupos se genera un agrupamiento aceptable.
+
+#### 5.3.3 Clasificacion de los grupos
+
+```{r}
+df <- datos[complete.cases(numericas_temp), ]
+df$grupo <- km$cluster
+
+grupo1 <- df[df$grupo ==1,]
+grupo2 <- df[df$grupo ==2,]
+grupo3 <- df[df$grupo ==3,]
+
+```
+
+
+##### Grupo 1
+```{r}
+summary(grupo1[,numericas])
+str(grupo1)
+sort(prop.table(table(grupo1$DEPREG))*100, decreasing=T)
+sort(prop.table(table(grupo1$TIPAR))*100, decreasing=T)
+sort(prop.table(table(grupo1$CLAPAR))*100, decreasing=T)
+sort(prop.table(table(grupo1$VIAPAR))*100, decreasing=T)
+sort(prop.table(table(grupo1$ESCIVM))*100, decreasing=T)
+sort(prop.table(table(grupo1$ESCOLAM))*100, decreasing=T)
+sort(prop.table(table(grupo1$SEXO))*100, decreasing=T)
+sort(prop.table(table(grupo1$MESREG))*100, decreasing=T)
+sort(prop.table(table(grupo1$NACIOM))*100, decreasing=T)
+sort(prop.table(table(grupo1$CAUDEF))*100, decreasing=T)
+sort(prop.table(table(grupo1$ASISREC))*100, decreasing=T)
+sort(prop.table(table(grupo1$SITIOOCU))*100, decreasing=T)
+```
+
+Características principales del grupo: 
+
+- Las semanas de gestación en las que se produjo la defunción van de 1 a 33. El 50% de las defunciones se produjeron abajo de la semana 27.
+- La edad promedio de las madres es de 27 años. Siendo la edad mínima 11 y la máxima 45. 
+- La cantidad de hijos tenidos para el grupo va de 1 a 11, siendo el promedio de 3. El 50% de las observaciones están por debajo de los 3 hijos tenidos.
+- La cantidad de hijos vivos en promedio es 1 hijo, siendo que el 75% de las mujeres solo tienen 2 hijso vivos o menos.
+
+
+##### Grupo 2
+```{r}
+summary(grupo2[,numericas])
+str(grupo2)
+
+sort(prop.table(table(grupo2$DEPREG))*100, decreasing=T)
+sort(prop.table(table(grupo2$TIPAR))*100, decreasing=T)
+sort(prop.table(table(grupo2$CLAPAR))*100, decreasing=T)
+sort(prop.table(table(grupo2$VIAPAR))*100, decreasing=T)
+sort(prop.table(table(grupo2$ESCIVM))*100, decreasing=T)
+sort(prop.table(table(grupo2$ESCOLAM))*100, decreasing=T)
+sort(prop.table(table(grupo2$SEXO))*100, decreasing=T)
+sort(prop.table(table(grupo2$MESREG))*100, decreasing=T)
+sort(prop.table(table(grupo2$NACIOM))*100, decreasing=T)
+sort(prop.table(table(grupo2$CAUDEF))*100, decreasing=T)
+sort(prop.table(table(grupo2$ASISREC))*100, decreasing=T)
+sort(prop.table(table(grupo2$SITIOOCU))*100, decreasing=T)
+```
+
+Características principales del grupo:
+
+- Las semanas de gestación en las que se produjo la defunción van de 30 a 44. El 50% de las defunciones fueron abajo de la semana 38.
+- La edad promedio de la mujer era de 25 años. Siendo la edad mínima 14 y la máxima 32. Teniendo que el 75% de las mujeres tenian menos de 28 años.
+- La cantidad de hijos tenidos para el grupo va de 1 a 12, siendo el promedio de 3. El 50% de las observaciones están por debajo de los 3 hijos tenidos, al igual que el grupo 2.
+- La media de la cantidad de hijos vivos es de 1 hijo. El 50% de las observaciones están por debajo de los 2 hijos vivos.
+
+##### Grupo 3
+```{r}
+summary(grupo3[,numericas])
+str(grupo3)
+
+sort(prop.table(table(grupo3$DEPREG))*100, decreasing=T)
+sort(prop.table(table(grupo3$TIPAR))*100, decreasing=T)
+sort(prop.table(table(grupo3$CLAPAR))*100, decreasing=T)
+sort(prop.table(table(grupo3$VIAPAR))*100, decreasing=T)
+sort(prop.table(table(grupo3$ESCIVM))*100, decreasing=T)
+sort(prop.table(table(grupo3$ESCOLAM))*100, decreasing=T)
+sort(prop.table(table(grupo3$SEXO))*100, decreasing=T)
+sort(prop.table(table(grupo3$MESREG))*100, decreasing=T)
+sort(prop.table(table(grupo3$NACIOM))*100, decreasing=T)
+sort(prop.table(table(grupo3$CAUDEF))*100, decreasing=T)
+sort(prop.table(table(grupo3$ASISREC))*100, decreasing=T)
+sort(prop.table(table(grupo3$SITIOOCU))*100, decreasing=T)
+```
+
+Características principales del grupo:
+
+- Las semanas de gestación en las que se produjo la defunción van de 22 a 44. El 50% de las defunciones fueron abajo de la semana 38.
+- La edad promedio de la mujer era de 36 años. Siendo la edad mínima 29 y la máxima 57. Teniendo que el 75% de las mujeres tenian entre 29 y 39 años.
+- La cantidad de hijos tenidos para el grupo va de 1 a 32, siendo el promedio de 6. El 75% de las observaciones están por debajo de los 7 hijos tenidos.
+- La cantidad de hijos vivos en premdió es de 4. El 75% de las observaciones tienen menos de 6 hijos vivos.
