@@ -33,19 +33,17 @@ library(randomForest)
 library(RColorBrewer)
 ```
 
-
 ```{r}
 datos <- read.csv("defunciones_fetales.csv")
 ```
 
-## Defunciones fetales en Guatemala 
+## Defunciones fetales en Guatemala
 
 ### Situacion Problematica
 
 En Guatemala se puede observar que la asistencia prenatal es muy baja, lo que es realmente delicado porque la falta de acceso a servicios de salud adecuados durante un embarazo puede traer graves consecuencias tanto para la madre como para el feto, en este caso se pude observar que llega al punto de contribuir a gran cantidad de defunciones fetales.
- 
-Con esta situación  es necesario tomar medidas para mejorar en generar los servicios de salud en el país, enfocándose en brindar una asistencia prenatal de mejor calidad para reducir cualquier riesgo relacionado con el embarazo de la madre y disminuir las defunciones fetales.
 
+Con esta situación es necesario tomar medidas para mejorar en generar los servicios de salud en el país, enfocándose en brindar una asistencia prenatal de mejor calidad para reducir cualquier riesgo relacionado con el embarazo de la madre y disminuir las defunciones fetales.
 
 ### Problema Científico
 
@@ -53,50 +51,49 @@ A raiz de que existe esta situación a nivel nacional nos queremos enfocar en de
 
 Por lo mismo el *objetivo principal* de este estudio es:
 
-- Analizar la relación entre la baja asistencia prenatal y la tasa de mortalidad fetal en las diferentes regiones de Guatelama.
+-   Analizar la relación entre la baja asistencia prenatal y la tasa de mortalidad fetal en las diferentes regiones de Guatelama.
 
 Dentro de los *objetivos especificos* se encuentra:
 
-- Analizar la relacion que existe entre la educacion materna y la asistencia prenatal en Guatemala.
-- Determinar si existen patrones temporales en las defunciones fetales a nivel nacional.
-- Obtener las primeras 5 regiones que en Guatemala necesitan mejorar la calidad de asistencia prenatal.
+-   Analizar la relacion que existe entre la educacion materna y la asistencia prenatal en Guatemala.
+-   Determinar si existen patrones temporales en las defunciones fetales a nivel nacional.
+-   Obtener las primeras 5 regiones que en Guatemala necesitan mejorar la calidad de asistencia prenatal.
 
-### 1. Resumen del conjunto de datos.  
+### 1. Resumen del conjunto de datos.
 
-El conjunto de datos está compuesto por `r nrow(datos)` filas
-y `r ncol(datos)` columnas.
+El conjunto de datos está compuesto por `r nrow(datos)` filas y `r ncol(datos)` columnas.
 
 ```{r}
 summary(datos)
 ```
 
-### 2. Tipo de cada una de las variables de dataset.  
+### 2. Tipo de cada una de las variables de dataset.
 
-- DEPREG (Departamento de registro) -> Categórica nominal    
-- MUPREG (Municipio de registro) -> Categórica nominal    
-- MESREG (Mes de registro) -> Categórica nominal      
-- AÑOREG (Año de registro) -> Categórica nominal    
-- DEPOCU (Departamento de ocurrencia) -> Categórica nominal    
-- MUPOCU (Municipio de ocurrencia) -> Categórica nominal    
-- SEXO (de la defunción fetal) -> Categórica nominal    
-- DIAOCU (Día de ocurrencia) -> Categórica nominal    
-- MESOCU (Mes de ocurrencia) -> Categórica nominal    
-- TIPAR (Tipo de parto) -> Categórica nominal    
-- CLAPAR (Clase de parto) -> Categórica nominal    
-- VIAPAR (Via del parto) -> Categórica nominal    
-- SEMGES (Semanas de gestación) -> Cuantitativa discreta  
-- EDADM (Edad de la madre) -> Cuantitativa discreta  
-- DEPREM (Departamento de residencia de la madre) -> Categórica nominal    
-- MUPREM (Municipio de residencia de la madre) -> Categórica nominal    
-- ESCIVM (Estado civil de la madre) -> Categórica nominal  
-- NACIOM (Nacionalidad de la madre) -> Categórica nominal  
-- ESCOLAM (Escolaridad de la madre) -> Categórica nominal  
-- CAUDEF (Causa de defunción) -> Categórica nominal  
-- ASISREC (Asistencia recibida) -> Categórica nominal  
-- SITIOOCU (Sitio de ocurrencia) -> Categórica nominal  
-- TOHITE (Total de hijos tenidos) -> Cuantitativa discreta  
-- TOHINM (Total de hijos nacidos muertos) -> Cuantitativa discreta  
-- TOHIVI (Total de hijos vivos) -> Cuantitativa discreta  
+-   DEPREG (Departamento de registro) -\> Categórica nominal\
+-   MUPREG (Municipio de registro) -\> Categórica nominal\
+-   MESREG (Mes de registro) -\> Categórica nominal\
+-   AÑOREG (Año de registro) -\> Categórica nominal\
+-   DEPOCU (Departamento de ocurrencia) -\> Categórica nominal\
+-   MUPOCU (Municipio de ocurrencia) -\> Categórica nominal\
+-   SEXO (de la defunción fetal) -\> Categórica nominal\
+-   DIAOCU (Día de ocurrencia) -\> Categórica nominal\
+-   MESOCU (Mes de ocurrencia) -\> Categórica nominal\
+-   TIPAR (Tipo de parto) -\> Categórica nominal\
+-   CLAPAR (Clase de parto) -\> Categórica nominal\
+-   VIAPAR (Via del parto) -\> Categórica nominal\
+-   SEMGES (Semanas de gestación) -\> Cuantitativa discreta\
+-   EDADM (Edad de la madre) -\> Cuantitativa discreta\
+-   DEPREM (Departamento de residencia de la madre) -\> Categórica nominal\
+-   MUPREM (Municipio de residencia de la madre) -\> Categórica nominal\
+-   ESCIVM (Estado civil de la madre) -\> Categórica nominal\
+-   NACIOM (Nacionalidad de la madre) -\> Categórica nominal\
+-   ESCOLAM (Escolaridad de la madre) -\> Categórica nominal\
+-   CAUDEF (Causa de defunción) -\> Categórica nominal\
+-   ASISREC (Asistencia recibida) -\> Categórica nominal\
+-   SITIOOCU (Sitio de ocurrencia) -\> Categórica nominal\
+-   TOHITE (Total de hijos tenidos) -\> Cuantitativa discreta\
+-   TOHINM (Total de hijos nacidos muertos) -\> Cuantitativa discreta\
+-   TOHIVI (Total de hijos vivos) -\> Cuantitativa discreta
 
 ### 3. Analisis de las variables
 
@@ -129,71 +126,75 @@ datos$TOHIVI <- ifelse(datos$TOHIVI == 99, NA, datos$TOHIVI)
 
 ### 3.2 Análisis de normalidad varibales cuantitativas
 
-### Prueba de normalidad para **SEMGES**.  
-  
+### Prueba de normalidad para **SEMGES**.
+
 Inicialmente se muestra un histograma de la distribución de EDADM.
 
 ```{r echo=F}
 semana_ges <- datos[datos$SEMGES != 99, ]
 hist(semana_ges$SEMGES)
 ```
+
 Se puede observar del histograma que hay datos muy atípicos en el extremo derecho. Es muy probable que la distribución no sea normal. Es posible observar que hay una fuerte frecuencia en el extremo derecho, como se mencionó.
 
+A continuación se realizó un QQplot para observar la distribución de los valores de SEMGES.
 
-A continuación se realizó un QQplot para observar la distribución de los
-valores de SEMGES.  
 ```{r echo=FALSE}
 qqnorm(semana_ges$SEMGES)
 qqline(semana_ges$SEMGES, col="red")
 ```
+
 Se puede observar del gráfico que la cola izquierda se aleja de la línea teórica y la cola derecha está mucho más alejada. Por lo tanto, la distribución de los datos no es normal.
 
-
 A continuación se hizo un test de normalidad con Lilliefors.
+
 ```{r echo=F}
 lillie.test(semana_ges$SEMGES)
 ```
 
 Es posible observar que el valor p es muy pequeño, mucho menor que el nivel de significancia de 0.05. Por lo tanto, se puede afirmar que la distribución de los datos no es normal.
 
-### Prueba de normalidad para **EDADM**.  
-  
+### Prueba de normalidad para **EDADM**.
+
 Inicialmente se muestra un histograma de la distribución de EDADM.
 
 ```{r echo=F}
 edad_madre <- datos[datos$EDADM != 999, ]
 hist(edad_madre$EDADM)
 ```
+
 Es posible observar del histograma que la distribución de los datos esta sesgada hacia la derecha. Es muy posible que no sea normal.
 
-A continuación se realizó un QQplot para observar la distribución de los
-valores de EDADM.  
+A continuación se realizó un QQplot para observar la distribución de los valores de EDADM.
+
 ```{r echo=FALSE}
 qqnorm(edad_madre$EDADM)
 qqline(edad_madre$EDADM, col="red")
 ```
+
 Al observar el gráfico se puede observar que los extremos están bastante alejados de la línea teórica, por lo que es muy probable que no se tenga una distribución normal.
 
 Finalmente se hizo un test de normalidad con Lilliefors.
+
 ```{r echo=F}
 lillie.test(edad_madre$EDADM)
 ```
+
 Se puede observar que el valor p es mucho menor al nivel de significancia, que es de 0.05, por lo que se puede afirmar que la distribución no sigue una distribución normal.
 
+### Prueba de normalidad para **TOHITE**.
 
-### Prueba de normalidad para **TOHITE**.  
-  
 Inicialmente se muestra un histograma de la distribución de TOHITE.
 
 ```{r echo=F}
 hijos_tenidos <- datos[datos$TOHITE != 99, ]
 hist(hijos_tenidos$TOHITE)
 ```
+
 Se observar del histograma que hay un fuerte sesgo hacia la izquierda. La forma de la distribución no parece normal.
 
+A continuación se realizó un QQplot para observar la distribución de los valores de TOHITE.
 
-A continuación se realizó un QQplot para observar la distribución de los
-valores de TOHITE.  
 ```{r echo=FALSE}
 qqnorm(hijos_tenidos$TOHITE)
 qqline(hijos_tenidos$TOHITE, col="red")
@@ -202,64 +203,71 @@ qqline(hijos_tenidos$TOHITE, col="red")
 Se puede observar que la gráfica tiene una forma de gradas. La distribución está bastante alejada de la línea teórica. Es muy probable que no sea normal.
 
 Finalmente se realizó un test de normalidad con Lilliefors.
+
 ```{r echo=F}
 lillie.test(hijos_tenidos$TOHITE)
 ```
 
 Es posible observar que el valor de p es mucho más bajo al nivel de significancia. Se puede afirmar que la distribución no sigue una forma normal.
 
+### Prueba de normalidad para **TOHINM**.
 
-### Prueba de normalidad para **TOHINM**.  
-  
 Inicialmente se muestra un histograma de la distribución de TOHINM.
 
 ```{r echo=F}
 hijos_muertos <- datos[datos$TOHINM != 99, ]
 hist(hijos_muertos$TOHINM)
 ```
+
 Se puede observar que la mayor cantidad de datos se encuentra en el extemo izquierdo. La distribución no tiene forma normal.
 
-A continuación se realizó un QQplot para observar la distribución de los
-valores de TOHINM.  
+A continuación se realizó un QQplot para observar la distribución de los valores de TOHINM.
+
 ```{r echo=FALSE}
 qqnorm(hijos_muertos$TOHINM)
 qqline(hijos_muertos$TOHINM, col="red")
 ```
+
 El extremo derecho se aleja bastante de la línea teórica. Es muy probable que no se tenga una distribución normal de los datos.
 
 Finalmente se hizo un test de normalidad con Lilliefors.
+
 ```{r echo=F}
 lillie.test(hijos_muertos$TOHINM)
 ```
+
 Se puede observar que el valor p es mucho menor que el nivel de significancia, de 0.05, por lo que se rechaza la hipótesis de que la distribución es normal.
 
+### Prueba de normalidad para **TOHIVI**.
 
-### Prueba de normalidad para **TOHIVI**.  
-  
 Inicialmente se muestra un histograma de la distribución de TOHIVI.
 
 ```{r echo=F}
 hijos_vivos <- datos[datos$TOHIVI != 99, ]
 hist(hijos_vivos$TOHIVI)
 ```
+
 Se puede observar que se tiene un sesgo a la izquierda. La distribución no tiene formal normal.
 
-A continuación se realizó un QQplot para observar la distribución de los
-valores de TOHIVI.  
+A continuación se realizó un QQplot para observar la distribución de los valores de TOHIVI.
+
 ```{r echo=FALSE}
 qqnorm(hijos_vivos$TOHIVI)
 qqline(hijos_vivos$TOHIVI, col="red")
 ```
+
 Se observa que la distribución tiene una forma de gradas y se aleja bastante de la línea teórica. Es muy probable que no sea normal.
 
 ```{r echo=F}
 lillie.test(hijos_vivos$TOHIVI)
 ```
+
 El valor de p es mucho menor que el nivel de significancia, por lo que se rechaza la hipótesis de que se tiene una distribución normal.
 
 ### 3.3 Análisis de distribución de variables cuantitativas
 
 #### Análisis para semana de gestación
+
 ```{r echo=F}
 boxplot(semana_ges$SEMGES,
   main = "Semanas de gestación",
@@ -269,9 +277,11 @@ boxplot(semana_ges$SEMGES,
   notch = TRUE
 )
 ```
+
 Es posible observar que un 50% de los datos están por debajo de aproximadamente la semana 37. Se tienen muchos datos atípicos en el extremo inferior.
 
 #### Análisis para edad de la madre
+
 ```{r echo=F}
 boxplot(edad_madre$EDADM,
   main = "Edad de la madre",
@@ -281,9 +291,11 @@ boxplot(edad_madre$EDADM,
   notch = TRUE
 )
 ```
+
 Es posible observar que existen datos atípicos en el extremo superior, luego de los 50 años. La edad mínima es de 10 años. Un 50% de los datos se encuentran por debajo de aproximadamente los 27 o 28 años. Se puede observar que a partir del tercer cuartil hay más dispersión.
 
 #### Análisis para total de hijos tenidos
+
 ```{r echo=F}
 boxplot(hijos_tenidos$TOHITE,
   main = "Total de hijos tenidos",
@@ -293,9 +305,11 @@ boxplot(hijos_tenidos$TOHITE,
   notch = TRUE
 )
 ```
+
 Es posible observar que el 50% de los datos se enceuntran por debajo de los 3 hijos aproximadamente. Se puede observar una gran cantidad de datos atípicos. La menor cantidad de hijos tenidos es 1. Hay bastante dispersión después del tercer cuartil. Existe un registro que tiene 32 hijos tenidos, el valor más atípico.
 
 #### Análisis para total de hijos fallecidos
+
 ```{r echo=F}
 boxplot(hijos_muertos$TOHINM,
   main = "Total de hijos fallecidos",
@@ -305,9 +319,11 @@ boxplot(hijos_muertos$TOHINM,
   notch = TRUE
 )
 ```
+
 Se puede observar que hay una gran cantidad de datos atípicos en esta distribución. La mayoría de datos está en 1 hijo fallecido.
 
 #### Análisis para total de hijos vivos
+
 ```{r echo=F}
 boxplot(hijos_vivos$TOHIVI,
   main = "Total de hijos vivos",
@@ -317,173 +333,213 @@ boxplot(hijos_vivos$TOHIVI,
   notch = TRUE
 )
 ```
+
 Se puede observar que el 50% de los datos están por debajo de aproximadamente 2 hijos. Se tienen muchos datos atípicos y hay bastante dispersión en la distribución. El valor menor de hijos vivos es de 0 y hay personas que tienen más de 15 hijos vivos.
 
 ### 3.4 Análisis de frecuencia varibales cualitativas
 
 A continuación se muestra la frecuencia de **DEPREG** el departamento de registro.
+
 ```{r echo=F}
 departamento <- table(datos$DEPREG)
 departamento
 barplot(departamento, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que la mayor cantidad de abortos se registran en el departamento de Guatemala seguido de Alta Verapaz como el segundo más alto. Esto puede indicar que la mayoría de personas reciben asistencia en el departamento de Guatemala, independientemente de donde vivan.
 
-
 A continuación se muestra la frecuencia de **MUPREG** el municipio de registro.
+
 ```{r echo=F}
 municipio <- table(datos$MUPREG)
 municipio
 barplot(municipio, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que la mayor cantidad de abortos se registran en el municipio de Guatemala. Esto indica que en el departamento de Guatemala, es en la capital donde más se producen las defunciones fetales.
 
 A continuación se muestra la frecuencia de **MESREG** el mes de registro.
+
 ```{r echo=F}
 mes_re <- table(datos$MESREG)
 mes_re
 barplot(mes_re, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que los meses de registro se encuentran balanceados entre si, aunque el mes con mayor registros es enero.
 
 A continuación se muestra la frecuencia de **AÑOREG** el año de registro.
+
 ```{r echo=F}
 ano_re <- table(datos$AÑOREG)
 ano_re
 barplot(ano_re, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que los años de registro se encuentran bastante balanceados entre si, aunque el año con mayor registros es 2013. Se observa una tendencia a una menor cantidad de defunciones mientras pasan los años.
 
 A continuación se muestra la frecuencia de **DEPOCU** el departamento de ocurrencia.
+
 ```{r echo=F}
 dep_ocu <- table(datos$DEPOCU)
 dep_ocu
 barplot(dep_ocu, col=c("orange", "blue"))
 ```
-La gráfica muestra que la mayor cantidad de abortos son ocurridos en el departamento de Guatemala seguido de Alta Verapaz como el segundo  más alto.
+
+La gráfica muestra que la mayor cantidad de abortos son ocurridos en el departamento de Guatemala seguido de Alta Verapaz como el segundo más alto.
 
 A continuación se muestra la frecuencia de **MUPOCU** el municipio de ocurrencia.
+
 ```{r echo=F}
 mun_ocu <- table(datos$MUPOCU)
 mun_ocu
 barplot(mun_ocu, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que la mayor cantidad de abortos son ocurridos en el municipio de Guatemala
 
 A continuación se muestra la frecuencia de **SEXO** de la defuncion fetal.
+
 ```{r echo=F}
 sexo <- table(datos$SEXO)
 sexo
 barplot(sexo, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que el sexo de la defuncion fetal mayormente son masculinos. Sin embargo, están bastante balanceados.
 
 A continuación se muestra la frecuencia de **DIAOCU** el dia de ocurrencia.
+
 ```{r echo=F}
 dia <- table(datos$DIAOCU)
 dia
 barplot(dia, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que los dias de ocurrencia estan bastante balanceados.
 
 A continuación se muestra la frecuencia de **MESOCU** el mes de ocurrencia.
+
 ```{r echo=F}
 mes <- table(datos$MESOCU)
 mes
 barplot(mes, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que al igual que con los dias los meses estan bastante balanceados pero si se puede observar que existe una mayor catidad en el mes de enero.
 
 A continuación se muestra la frecuencia de **TIPAR** el tipo de parto.
+
 ```{r echo=F}
 tipoP <- table(datos$TIPAR)
 tipoP
 barplot(tipoP, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que la mayoria de los partos fueron de tipo simple.
 
 A continuación se muestra la frecuencia de **CLAPAR** el clase de parto.
+
 ```{r echo=F}
 claseP <- table(datos$CLAPAR)
 claseP
 barplot(claseP, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que la mayoria de los partos fueron de clase eutocio.
 
 A continuación se muestra la frecuencia de **VIAPAR** la via del parto.
+
 ```{r echo=F}
 viaP <- table(datos$VIAPAR)
 viaP
 barplot(viaP, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que la mayoria de los partos fueron por via vaginal.
 
 A continuación se muestra la frecuencia de **DEPREM** el departamento de residencia de la madre.
+
 ```{r echo=F}
 depM <- table(datos$DEPREM)
 depM
 barplot(depM, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que la mayoria de las madres son residentes del departamento de Guatemala.
 
 A continuación se muestra la frecuencia de **MUPREM** el municipio de residencia de la madre.
+
 ```{r echo=F}
 munM <- table(datos$MUPREM)
 munM
 barplot(munM, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que la mayoria de las madres son residentes del municipio de Guatemala.
 
 A continuación se muestra la frecuencia de **ESCIVM** el estado civil de la madre.
+
 ```{r echo=F}
 estadoC <- table(datos$ESCIVM)
 estadoC
 barplot(estadoC, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que la mayoria de las madres eran solteras.
 
 A continuación se muestra la frecuencia de **NACIOM** la nacionalidad de la madre.
+
 ```{r echo=F}
 nacionalidad <- table(datos$NACIOM)
 nacionalidad
 barplot(nacionalidad, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que casi todas las madres tienen una nacionalidad guatemalteca, aunque se muestran variedad de nacionalidades.
 
 A continuación se muestra la frecuencia de **ESCOLAM** la escolaridad de la madre.
+
 ```{r echo=F}
 escolaridad <- table(datos$ESCOLAM)
 escolaridad
 barplot(escolaridad, col=c("orange", "blue"))
 ```
+
 La gráfica indica que la gran mayoria de las madres no recibieron ningun tipo de estudios, y que el segundo grupo de madres solo llego a estudios primarios.
 
 A continuación se muestra la frecuencia de **CAUDEF** la causa de la defuncion.
+
 ```{r echo=F}
 causaDef <- table(datos$CAUDEF)
 causaDef
 barplot(causaDef, col=c("orange", "blue"))
 ```
+
 La gráfica muestra que la mayoria de las causas de defuncion son no especificadas o por Hipoxia intrauterina, no especificada.
 
 A continuación se muestra la frecuencia de **ASISREC** la asistencia recibida.
+
 ```{r echo=F}
 asistencia <- table(datos$ASISREC)
 asistencia
 barplot(asistencia, col=c("orange", "blue"))
 ```
+
 Al observar el grafico podemos observar que la mayoria de los abortos recibieron asistencia medica.
 
 A continuación se muestra la frecuencia de **SITIOOCU** sitio de ocurrencia.
+
 ```{r echo=F}
 sitio <- table(datos$SITIOOCU)
 sitio
 barplot(sitio, col=c("orange", "blue"))
 ```
+
 Al observar el grafico podemos observar que la mayoria de los abortos ocurrieron en un Hospital publico.
 
-
 ### 3.4 Matriz de correlación entre variables
+
 ```{r echo=F}
 numericas <- c("SEMGES", "EDADM", "TOHITE", "TOHINM", "TOHIVI")
 cualitativas <- datos[, !(names(datos) %in% numericas)]
@@ -499,13 +555,16 @@ corrplot(corr_matrix)
 ### 4. Preguntas de investigacion
 
 #### 4.1. ¿Cual es la edad promedio de las madres que abortan?
+
 ```{r echo=F}
 edad <- datos$EDADM
 mean(edad, na.rm = T)
 ```
+
 La edad promedio de las madres que abortan es de 27.
 
 #### 4.2. ¿Existe algún patrón temporal en las defunciones fetales?
+
 ```{r echo=F}
 time_df <- datos
 time_df$fecha <- as.Date(paste(time_df$AÑOREG, time_df$MESREG, '01', sep='-'), format = "%Y-%m-%d")
@@ -544,7 +603,6 @@ causas_por_semana <- aggregate(CAUDEF ~ SEMGES, data = datos, function(x) {
 causas_por_semana
 ```
 
-
 #### 4.5 ¿Hay diferencias en la distribución de defunciones fetales entre los diferentes departamentos o municipios de registro?
 
 ```{r}
@@ -563,6 +621,7 @@ ggplot(data_grouped, aes(x = DEPREG, y = Defunciones, fill = MUPREG)) +
        y = "Número de defunciones fetales")
 
 ```
+
 Al evaular la grafica podemos observar que la mayoria de las defunciones fetales ocurren en el departamento de Guatemala y en el municipio de Guatemala.
 
 #### 4.6 ¿El estado civil de la madre influye en la probabilidad de una defunción fetal?
@@ -583,7 +642,8 @@ ggplot(data_grouped_escivm, aes(x = ESCIVM, y = Defunciones, fill = ESCIVM)) +
        y = "Número de defunciones fetales")
 
 ```
-Al observar la tabla podemos ver que la mayoria de las defunciones fetales ocurrieron en madres solteras.  
+
+Al observar la tabla podemos ver que la mayoria de las defunciones fetales ocurrieron en madres solteras.
 
 #### 4.7 ¿Las madres con más hijos tenidos tienen una mayor proporción de defunciones fetales?
 
@@ -603,6 +663,7 @@ ggplot(data_grouped_hijos, aes(x = TOHITE, y = Defunciones, fill = TOHITE)) +
        y = "Número de defunciones fetales")
 
 ```
+
 Al observar el grafico podemos ver que a medida de que se tengan mas hijos es menor la probabilidad de tener una defuncion fetal.a partir de 1 hijo tenido. ya que este es el que tiene la mayor probabilidad de tener una defuncion fetal.
 
 #### 4.8 ¿Los sitios de ocurrencia tienen un impacto en la tasa de defunciones fetales?
@@ -645,10 +706,11 @@ ggplot(data_grouped_mesocu, aes(x = MESOCU, y = Defunciones, fill = MESOCU)) +
        y = "Número de defunciones fetales")
 
 ```
+
 Se puede observar que el mes de gestacion con mayor probabilidad de tener una defuncion fetal es el mes 1, sin embargo todos los meses estan en un rango similar de probabilidad de tener una defuncion fetal.
 
-
 #### 4.10 ¿Existe alguna relación entre la semana de gestacíon y la via del parto?
+
 ```{r echo=F}
 datos_seleccionados <- select(datos, SEMGES, VIAPAR)
 
@@ -657,8 +719,8 @@ ggplot(data = datos_seleccionados, aes(x = VIAPAR, y = SEMGES)) +
   labs(x = "Vía del parto", y = "Semanas de gestación") +
   ggtitle("Relación entre la semana de gestación y la vía del parto")
 ```
-Como se puede observar en el diagrama de caja y bigoteindica la separacion de los bigotes es considerablemente alta lo que nos indica que hay una diferencia en las semanas de gestación según la vía del parto. En otras palabras, que si existe una relación entre estas dos variables.
 
+Como se puede observar en el diagrama de caja y bigoteindica la separacion de los bigotes es considerablemente alta lo que nos indica que hay una diferencia en las semanas de gestación según la vía del parto. En otras palabras, que si existe una relación entre estas dos variables.
 
 #### 4.11 ¿Cuáles son las 5 semanas de gestación donde más defunciones se dan?
 
@@ -680,7 +742,6 @@ ggplot(top_semanas, aes(x = SEMGES, y = count)) +
 
 Las semanas donde más defunciones se dan van de la 36 a la 50. La mayor cantidad de defunciones se da en la semana 40, la cual es una semana bastante tardía.
 
-
 ## 5. Clustering
 
 ### 5.1 Determinar si vale la pena agrupar
@@ -693,6 +754,7 @@ distancia <- dist(numericas_norm)
 
 # fviz_dist(distancia, show_labels = F)
 ```
+
 Se calculó el estadístico de Hopkins para determinar si es válido agrupar los datos. El valor de este es de `r round(h, 2)`, por lo que si vale la pena intentar un agrupamiento.
 
 ### 5.2 Determinar la cantidad de grupos para el cluster
@@ -716,11 +778,13 @@ plot(1:10, wss, type="bow", xlab="Cantidad de grupos", ylab="wss")
 #fviz_nbclust(numericas_norm, kmeans, method="wss")
 fviz_nbclust(numericas_norm, kmeans, method="silhouette")
 ```
+
 Es posible observar de la gráfica del codo que la cantidad de grupos óptima son 3. La silueta indica lo mismo, así que se procederá a realizar esta cantidad.
 
 ### 5.3 Por k medias
 
 #### 5.3.1 Agrupamiento
+
 ```{r kmedias}
 set.seed(123)
 km <- kmeans(numericas_norm, centers = 3, iter.max = 100)
@@ -734,6 +798,7 @@ fviz_cluster(km, numericas_norm)
 ```
 
 #### 5.3.2 Calidad del agrupamiento segun el método de la silueta
+
 ```{r}
 set.seed(123)
 m <- data.frame(withinss = km$withinss, size = km$size)
@@ -746,6 +811,7 @@ silueta <- silhouette(km$cluster, distancia)
 mean <- mean(silueta[, 3])
 mean
 ```
+
 La silueta es de `r round(mean, 2)`, lo cual es un valor relativamente alto que indica que con 3 grupos se genera un agrupamiento aceptable.
 
 ```{r}
@@ -768,8 +834,8 @@ grupo3 <- df[df$grupo == 3,]
 
 ```
 
-
 ##### Grupo 1
+
 ```{r}
 summary(grupo1[,numericas])
 str(grupo1)
@@ -788,19 +854,19 @@ sort(prop.table(table(grupo1$ASISREC))*100, decreasing=T)
 sort(prop.table(table(grupo1$SITIOOCU))*100, decreasing=T)
 ```
 
-Características principales del grupo: 
+Características principales del grupo:
 
-- Las semanas de gestación en las que se produjo la defunción van de 1 a 33. El 50% de las defunciones se produjeron abajo de la semana 27.
-- La edad promedio de las madres es de 27 años. Siendo la edad mínima 11 y la máxima 45. 
-- La cantidad de hijos tenidos para el grupo va de 1 a 11, siendo el promedio de 3. El 50% de las observaciones están por debajo de los 3 hijos tenidos.
-- La cantidad de hijos vivos en promedio es 1 hijo, siendo que el 75% de las mujeres solo tienen 2 hijos vivos o menos.
-- En este grupo la mayoría de mujeres tienen 1 hijo en el parto y un 6.6% tienen 2.
-- En este grupo la mayoría de mujeres, un 39%, tienen una educación primaria. Un 26% tienen educación nula.
+-   Las semanas de gestación en las que se produjo la defunción van de 1 a 33. El 50% de las defunciones se produjeron abajo de la semana 27.
+-   La edad promedio de las madres es de 27 años. Siendo la edad mínima 11 y la máxima 45.
+-   La cantidad de hijos tenidos para el grupo va de 1 a 11, siendo el promedio de 3. El 50% de las observaciones están por debajo de los 3 hijos tenidos.
+-   La cantidad de hijos vivos en promedio es 1 hijo, siendo que el 75% de las mujeres solo tienen 2 hijos vivos o menos.
+-   En este grupo la mayoría de mujeres tienen 1 hijo en el parto y un 6.6% tienen 2.
+-   En este grupo la mayoría de mujeres, un 39%, tienen una educación primaria. Un 26% tienen educación nula.
 
 Con las caracteristicas mencionadas anteriormente podemos denotar a este grupo como "grupo de madres jovenes que tuvieron una defunción temprana, mayormente con educación primaria".
 
-
 ##### Grupo 2
+
 ```{r}
 summary(grupo2[,numericas])
 str(grupo2)
@@ -822,16 +888,17 @@ sort(prop.table(table(grupo2$SITIOOCU))*100, decreasing=T)
 
 Características principales del grupo:
 
-- Las semanas de gestación en las que se produjo la defunción van de 30 a 44. El 50% de las defunciones fueron abajo de la semana 38.
-- La edad promedio de la mujer era de 25 años. Siendo la edad mínima 14 y la máxima 32. Teniendo que el 75% de las mujeres tenian menos de 28 años.
-- La cantidad de hijos tenidos para el grupo va de 1 a 12, siendo el promedio de 3. El 50% de las observaciones están por debajo de los 3 hijos tenidos, al igual que el grupo 2.
-- La media de la cantidad de hijos vivos es de 1 hijo. El 50% de las observaciones están por debajo de los 2 hijos vivos.
-- En este grupo la mayoría de mujeres tienen 1 hijo en el parto y un 3.86% tienen 2.
-- En este grupo la mayoría de mujeres, un 42%, tienen una educación primaria. Un 35% tienen educación nula.
+-   Las semanas de gestación en las que se produjo la defunción van de 30 a 44. El 50% de las defunciones fueron abajo de la semana 38.
+-   La edad promedio de la mujer era de 25 años. Siendo la edad mínima 14 y la máxima 32. Teniendo que el 75% de las mujeres tenian menos de 28 años.
+-   La cantidad de hijos tenidos para el grupo va de 1 a 12, siendo el promedio de 3. El 50% de las observaciones están por debajo de los 3 hijos tenidos, al igual que el grupo 2.
+-   La media de la cantidad de hijos vivos es de 1 hijo. El 50% de las observaciones están por debajo de los 2 hijos vivos.
+-   En este grupo la mayoría de mujeres tienen 1 hijo en el parto y un 3.86% tienen 2.
+-   En este grupo la mayoría de mujeres, un 42%, tienen una educación primaria. Un 35% tienen educación nula.
 
 Con las caracteristicas mencionadas anteriormente podemos denotar a este grupo como "grupo de madres jovenes que tuvieron una defunción tardía, mayormente con educación primaria y nula".
 
 ##### Grupo 3
+
 ```{r}
 summary(grupo3[,numericas])
 str(grupo3)
@@ -853,11 +920,11 @@ sort(prop.table(table(grupo3$SITIOOCU))*100, decreasing=T)
 
 Características principales del grupo:
 
-- Las semanas de gestación en las que se produjo la defunción van de 22 a 44. El 50% de las defunciones fueron abajo de la semana 38.
-- La edad promedio de la mujer era de 36 años. Siendo la edad mínima 29 y la máxima 57. Teniendo que el 75% de las mujeres tenian entre 29 y 39 años.
-- La cantidad de hijos tenidos para el grupo va de 1 a 32, siendo el promedio de 6. El 75% de las observaciones están por debajo de los 7 hijos tenidos.
-- La cantidad de hijos vivos en promedio es de 4. El 75% de las observaciones tienen menos de 6 hijos vivos.
-- En este grupo la mayoría de mujeres tienen 1 hijo en el parto y un 2.7% tienen 2.
-- En este grupo la mayoría de mujeres, un 53%, no tienen educación. Un 33% tienen educación primara.
+-   Las semanas de gestación en las que se produjo la defunción van de 22 a 44. El 50% de las defunciones fueron abajo de la semana 38.
+-   La edad promedio de la mujer era de 36 años. Siendo la edad mínima 29 y la máxima 57. Teniendo que el 75% de las mujeres tenian entre 29 y 39 años.
+-   La cantidad de hijos tenidos para el grupo va de 1 a 32, siendo el promedio de 6. El 75% de las observaciones están por debajo de los 7 hijos tenidos.
+-   La cantidad de hijos vivos en promedio es de 4. El 75% de las observaciones tienen menos de 6 hijos vivos.
+-   En este grupo la mayoría de mujeres tienen 1 hijo en el parto y un 2.7% tienen 2.
+-   En este grupo la mayoría de mujeres, un 53%, no tienen educación. Un 33% tienen educación primara.
 
 Con las caracteristicas mencionadas anteriormente podemos denotar a este grupo como "grupo de madres mayores con mayor cantidad de hijos tenidos con escolaridad mayormente nula".
