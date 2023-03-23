@@ -33,7 +33,7 @@ library(randomForest)
 library(RColorBrewer)
 ```
 
-```{r}
+```{r echo=F, include=FALSE}
 datos <- read.csv("defunciones_fetales.csv")
 ```
 
@@ -59,15 +59,7 @@ Dentro de los *objetivos especificos* se encuentra:
 -   Determinar si existen patrones temporales en las defunciones fetales a nivel nacional.
 -   Obtener las primeras 5 regiones que en Guatemala necesitan mejorar la calidad de asistencia prenatal.
 
-### 1. Resumen del conjunto de datos.
-
-El conjunto de datos está compuesto por `r nrow(datos)` filas y `r ncol(datos)` columnas.
-
-```{r}
-summary(datos)
-```
-
-### 2. Tipo de cada una de las variables de dataset.
+### Tipo de cada una de las variables de dataset.
 
 -   DEPREG (Departamento de registro) -\> Categórica nominal\
 -   MUPREG (Municipio de registro) -\> Categórica nominal\
@@ -95,17 +87,55 @@ summary(datos)
 -   TOHINM (Total de hijos nacidos muertos) -\> Cuantitativa discreta\
 -   TOHIVI (Total de hijos vivos) -\> Cuantitativa discreta
 
-### 3. Analisis de las variables
+### 1. Análsis de NA y limpieza
 
-### 3.1 Análsis de NA
+Los datos tienen un encoding en el que se pone un número (como 99 o 999) para indicar que no se tiene información. Por lo tanto es necesario reemplazar estos números por NA.
+```{r echo=F}
+datos$SEXO <- ifelse(datos$SEXO == 9, NA, datos$SEXO)
+datos$SEMGES <- ifelse(datos$SEMGES == 99, NA, datos$SEMGES)
+datos$EDADM <- ifelse(datos$EDADM == 999, NA, datos$EDADM)
+datos$DEPREM <- ifelse(datos$DEPREM == 9999, NA, datos$DEPREM)
+datos$MUPREM <- ifelse(datos$MUPREM == 9999, NA, datos$MUPREM)
+datos$ESCIVM <- ifelse(datos$ESCIVM == 9, NA, datos$ESCIVM)
+datos$NACIOM <- ifelse(datos$NACIOM == 9, NA, datos$NACIOM)
+datos$ESCOLAM <- ifelse(datos$ESCOLAM == 9, NA, datos$ESCOLAM)
+datos$SITIOOCU <- ifelse(datos$SITIOOCU == 9, NA, datos$SITIOOCU)
+datos$TOHITE <- ifelse(datos$TOHITE == 99, NA, datos$TOHITE)
+datos$TOHINM <- ifelse(datos$TOHINM == 99, NA, datos$TOHINM)
+datos$TOHIVI <- ifelse(datos$TOHIVI == 99, NA, datos$TOHIVI)
+```
+
+Además, también se tienen muchas variables con valores numéricos pero que son cualitativas. Por lo tanto, se conviertieron en factores.
+
+```{r echo=F}
+cualitativas <- c('DEPREG', 'MUPREG', 'MESREG', 'AÑOREG', 'DEPOCU', 'MUPOCU', 'SEXO', 'DIAOCU', 'MESOCU', 'TIPAR', 'CLAPAR', 'VIAPAR', 'DEPREM', 'MUPREM', 'ESCIVM', 'NACIOM', 'ESCOLAM', 'CAUDEF', 'ASISREC', 'SITIOOCU')
+datos[, cualitativas] <- lapply(datos[, cualitativas], as.factor)
+```
+
 
 ```{r echo=F}
 colSums(is.na(datos))
 ```
 
-Es posible observar que se tienen valores faltantes en la cantidad de hijos tenidos, de hijos fallecidos y de hijos vivos.
+Es posible observar que se tienen valores faltantes en la cantidad de hijos tenidos, de hijos fallecidos y de hijos vivos. Además, también se tienen en el sexo de la defunción, la semana de gestación, la edad de la madre, el departamenteo y municipio de residencia de la madre, la escolaridad de la madre y el estado civil de la madre.
 
-Se tienen múltiples variables donde se usa 999 o 9 como código de un valor ignorado. Se reemplazarán estos valores por NA.
+Los datos faltantes no se eliminaron acá, si no que al momento de hacer clustering se obtuvieron las variables cuantitativas y a esas se les quitaron los NA.
+
+### 2. Resúmen del conjunto de datos.
+
+El conjunto de datos está compuesto por `r nrow(datos)` filas y `r ncol(datos)` columnas.
+
+```{r}
+summary(datos)
+```
+
+- Es posible observar que la media de semanas de gestación está en 36. Un 75% de las defunciones se dieron abajo de las 44 semanas.
+- La media de la edad de las madres es de 27 años. Un 75% de las madres está por debajo de los 33 años. La madre de mayor edad tiene 57 años.
+- La media de hijos tenidos es de 4. El 75% de las madres tienen 5 hijos o menos. Existe una madre con 32 hijos tenidos. La media de hijos fallecidos es de 1.27. Un 75% de las madres solo han tenido 1 hijo fallecido. Existe una madre que tiene 30 hijos fallecidos.
+- El 75% de las madres tienen 4 o menos hijos vivos. Existe una madre que tiene 16 hijos vivos.
+
+
+### 3. Analisis de las variables
 
 ```{r echo=F}
 datos$SEXO <- ifelse(datos$SEXO == 9, NA, datos$SEXO)
@@ -278,7 +308,7 @@ boxplot(semana_ges$SEMGES,
 )
 ```
 
-Es posible observar que un 50% de los datos están por debajo de aproximadamente la semana 37. Se tienen muchos datos atípicos en el extremo inferior.
+Es posible observar que un 50% de los datos están por debajo de aproximadamente la semana 37. Se tienen muchos datos atípicos en el extremo inferior. Las muertes fetales tempranas ocurren entre las 20 y 27 semanas, mientras que las tardías de 28 a 36 semanas. De esta forma, la mayoría de defunciones están en el rango de las 20 a las 40 semanas, sin embargo, en el dataset se tienen defunciones por debajo de las 20 semanas, que son los múltiples datos atípicos que se pueden observar.
 
 #### Análisis para edad de la madre
 
@@ -292,7 +322,7 @@ boxplot(edad_madre$EDADM,
 )
 ```
 
-Es posible observar que existen datos atípicos en el extremo superior, luego de los 50 años. La edad mínima es de 10 años. Un 50% de los datos se encuentran por debajo de aproximadamente los 27 o 28 años. Se puede observar que a partir del tercer cuartil hay más dispersión.
+Es posible observar que existen datos atípicos en el extremo superior, luego de los 50 años. La edad mínima es de 10 años. Un 50% de los datos se encuentran por debajo de aproximadamente los 27 o 28 años. Se puede observar que a partir del tercer cuartil hay más dispersión. La edad fértil de una mujer está entre los 19 y 30 años, y esta va disminuyendo hasta aproximadamente los 50 años. La mayoría de madres se encuentran entre este rango de años, pero existen datos atípicos que están arriba de los 50 años. Algo importante a resaltar es que existen madres de 10 años que se encuentran en el rango normal.
 
 #### Análisis para total de hijos tenidos
 
@@ -306,7 +336,7 @@ boxplot(hijos_tenidos$TOHITE,
 )
 ```
 
-Es posible observar que el 50% de los datos se enceuntran por debajo de los 3 hijos aproximadamente. Se puede observar una gran cantidad de datos atípicos. La menor cantidad de hijos tenidos es 1. Hay bastante dispersión después del tercer cuartil. Existe un registro que tiene 32 hijos tenidos, el valor más atípico.
+Es posible observar que el 50% de los datos se enceuntran por debajo de los 3 hijos aproximadamente. Se puede observar una gran cantidad de datos atípicos. La menor cantidad de hijos tenidos es 1. Hay bastante dispersión después del tercer cuartil. Existe un registro que tiene 32 hijos tenidos, el valor más atípico. Además, el promedio de hijos tenidos en Guatemala es de aproximadamente 6. Los datos atípicos representan mujeres que han tenido muchos hijos, como el dato de 32 que se menciona.
 
 #### Análisis para total de hijos fallecidos
 
@@ -320,7 +350,7 @@ boxplot(hijos_muertos$TOHINM,
 )
 ```
 
-Se puede observar que hay una gran cantidad de datos atípicos en esta distribución. La mayoría de datos está en 1 hijo fallecido.
+Se puede observar que hay una gran cantidad de datos atípicos en esta distribución. La mayoría de datos tienen 1 hijo fallecido, que muy probablemnte sea el que se registró en el dataset. Muchas madres han tenido más de 1 hijo fallecido que son los datos atípicos, hasta un dato extremo de 30 hijos fallecidos. Esta persona puede tener una condición médica que no le permite formar los hijos correctamente.
 
 #### Análisis para total de hijos vivos
 
@@ -552,6 +582,8 @@ corr_matrix <- cor(numericas_norm)
 corrplot(corr_matrix)
 ```
 
+Es posible observar que existe una correlación entre la cantidad de hijos tenidos y la edad de la madre. Esto quiere decir que mientras más edad tiene una madre, más hijos ha tenido. Por otra parte, se tiene una leve correlación entre la cantidad de hijos fallecidos con la cantidad de hijos tenidos. La cantidad de hijos vivos tiene una muy fuerte correlación con la cantidad de hijos vivos. La cantidad de hijos vivos también tiene correlación con la edad de la madre.
+
 ### 4. Preguntas de investigacion
 
 #### 4.1. ¿Cual es la edad promedio de las madres que abortan?
@@ -603,22 +635,30 @@ causas_por_semana <- aggregate(CAUDEF ~ SEMGES, data = datos, function(x) {
 causas_por_semana
 ```
 
-#### 4.5 ¿Hay diferencias en la distribución de defunciones fetales entre los diferentes departamentos o municipios de registro?
+#### 4.5 ¿Cual es el Promedio de defunciones por año?
 
 ```{r}
-# Agrupar por departamento y municipio de registro
-data_grouped <- datos %>%
-  group_by(DEPREG, MUPREG) %>%
+
+# Agrupar por año de registro
+data_grouped_anoreg <- datos %>%
+  group_by(AÑOREG) %>%
   summarise(Defunciones = n()) %>%
   ungroup()
 
-# Visualizar resultados
-ggplot(data_grouped, aes(x = DEPREG, y = Defunciones, fill = MUPREG)) +
+# Mostrar el resultado
+ggplot(data_grouped_anoreg, aes(x = AÑOREG, y = Defunciones, fill = factor(AÑOREG))) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Defunciones fetales por departamento y municipio de registro",
-       x = "Departamento de registro",
+  labs(title = "Defunciones fetales por año",
+       x = "Año de registro",
        y = "Número de defunciones fetales")
+
+# Calcular el promedio de defunciones fetales por año
+promedio_defunciones_anuales <- mean(data_grouped_anoreg$Defunciones)
+
+# Mostrar el resultado
+cat("El promedio de defunciones fetales por año es:", promedio_defunciones_anuales)
+
 
 ```
 
@@ -688,23 +728,22 @@ ggplot(data_grouped_escolam, aes(x = ESCOLAM, y = Defunciones, fill = factor(ESC
 
 Podemos observar que la mayoria de las defunciones fetales ocurren en madres con un nivel de escolaridad baja o nula.
 
-#### 4.9 ¿Hay alguna estacionalidad en las defunciones fetales, es decir, variaciones a lo largo de los meses del año?
+#### 4.9 ¿Existe alguna relación entre la vía del parto y la escolaridad de la madre en las defunciones fetales?
 
 ```{r}
-# Agrupar por mes de ocurrencia
-data_grouped_mesocu <- datos %>%
-  group_by(MESOCU) %>%
-  summarise(Defunciones = n()) %>%
-  ungroup()
+# Crear una tabla de contingencia para el recuento de casos por vía del parto y escolaridad de la madre
+data_grouped <- datos %>%
+  count(ESCOLAM, VIAPAR) %>%
+  rename(Escolaridad = ESCOLAM, ViaParto = VIAPAR, Casos = n)
 
-# Visualizar resultados
-ggplot(data_grouped_mesocu, aes(x = MESOCU, y = Defunciones, fill = MESOCU)) +
-  geom_bar(stat = "identity", position = "dodge") +
+# Visualizar resultados en un gráfico de barras apiladas
+ggplot(data_grouped, aes(x = factor(Escolaridad), y = Casos, fill = factor(ViaParto))) +
+  geom_bar(stat = "identity") +
   theme_minimal() +
-  labs(title = "Defunciones fetales por mes de ocurrencia",
-       x = "Mes de ocurrencia",
-       y = "Número de defunciones fetales")
-
+  labs(title = "Relación entre la vía del parto y la escolaridad de la madre en defunciones fetales",
+       x = "Escolaridad de la madre",
+       y = "Número de casos",
+       fill = "Vía del parto")
 ```
 
 Se puede observar que el mes de gestacion con mayor probabilidad de tener una defuncion fetal es el mes 1, sin embargo todos los meses estan en un rango similar de probabilidad de tener una defuncion fetal.
@@ -722,7 +761,33 @@ ggplot(data = datos_seleccionados, aes(x = VIAPAR, y = SEMGES)) +
 
 Como se puede observar en el diagrama de caja y bigoteindica la separacion de los bigotes es considerablemente alta lo que nos indica que hay una diferencia en las semanas de gestación según la vía del parto. En otras palabras, que si existe una relación entre estas dos variables.
 
-#### 4.11 ¿Cuáles son las 5 semanas de gestación donde más defunciones se dan?
+#### 4.11 ¿Cómo se distribuye la asistencia médica recibida?
+
+```{r echo=F}
+tabla <- table(datos$ASISREC)
+data <- as.data.frame(tabla)
+colnames(data) <- c('ASISREC', 'count')
+# Compute percentages
+data$fraction = data$count / sum(data$count)
+
+# Compute the cumulative percentages (top of each rectangle)
+data$ymax = cumsum(data$fraction)
+
+# Compute the bottom of each rectangle
+data$ymin = c(0, head(data$ymax, n=-1))
+ 
+# Make the plot
+ggplot(data, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=ASISREC)) +
+     geom_rect() +
+     coord_polar(theta="y") + # Try to remove that to understand how the chart is built initially
+     xlim(c(2, 4)) # Try to remove that to see how to make a pie chart
+
+```
+
+Se puede observar que la mayor cantidad de veces se recibe asistencia médica, que pertenece al código 1. Luego se puede observar que varias emergencias son atendidas por una comadrona. Bastantes defunciones fetales no tuvieron asistencia alguna, lo que corresponde a la porción del código 5.
+
+
+#### 4.12 ¿Cuáles son las 5 semanas de gestación donde más defunciones se dan?
 
 ```{r}
 temp <- datos[complete.cases(datos), ]
@@ -741,6 +806,32 @@ ggplot(top_semanas, aes(x = SEMGES, y = count)) +
 ```
 
 Las semanas donde más defunciones se dan van de la 36 a la 50. La mayor cantidad de defunciones se da en la semana 40, la cual es una semana bastante tardía.
+
+#### 4.13 ¿Cuál es la frecuencia del sitio de ocurrencia de los partos?
+
+```{r echo=F}
+tabla <- table(datos$SITIOOCU)
+data <- as.data.frame(tabla)
+colnames(data) <- c('SITIOOCU', 'count')
+# Compute percentages
+data$fraction = data$count / sum(data$count)
+
+# Compute the cumulative percentages (top of each rectangle)
+data$ymax = cumsum(data$fraction)
+
+# Compute the bottom of each rectangle
+data$ymin = c(0, head(data$ymax, n=-1))
+ 
+# Make the plot
+ggplot(data, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=SITIOOCU)) +
+     geom_rect() +
+     coord_polar(theta="y") + # Try to remove that to understand how the chart is built initially
+     xlim(c(2, 4)) # Try to remove that to see how to make a pie chart
+
+```
+
+La mayoría de defunciones se dán en hospitales públicos. Este dato es importante, porque puede indicar alguna deficiencia en este tipo de hospitales. Interesantemente, la siguiente categoría en defunciones fetales es en domicilios, correspondiente al código 6. El seguro social y hospitales privados reportan una cantidad muy similar de defunciones.
+
 
 ## 5. Clustering
 
@@ -928,3 +1019,14 @@ Características principales del grupo:
 -   En este grupo la mayoría de mujeres, un 53%, no tienen educación. Un 33% tienen educación primara.
 
 Con las caracteristicas mencionadas anteriormente podemos denotar a este grupo como "grupo de madres mayores con mayor cantidad de hijos tenidos con escolaridad mayormente nula".
+
+
+
+### Resumen del analisis exploratorio
+
+Luego de realizar el analisis exploratorio sobre los datos de las defunciones fetales en Guatemala desde el 2010 hasta el 2019, de forma general podemos concluir que: Guatemala es lastimosamente un pais donde la cantidad de defunciones fetales es muy alta, teniendo un promedio de 2,774 defunciones fetales por año. siendo que más del 50% de las defunciones fetales ocurren enntre la semana 36 a la 50 de gestación pero mayormente se dan en la semana 40 por lo que indica que los fetos ya habian llegado a desarrllarse bastante, esto ocurre en todas las regiones de nuestro pais y muy tristemente en todo tipo de mujeres. 
+La mayoria de las defunciones fetales ocurren en mujeres de entre 20 y 30 años, aunque el 75% de las mujeres tienen menos de 28 años. A pesar de ello podemos encontrar niñas de tan solo 10 año que han tenido que enfrentar la muerte de su hijo. Normalmente las mujeres tienen 1 hijo en el parto pero existe un 6.6% de muejres que tienen 2. De las madres tambien se obtuvo que un 39%, tienen una educación primaria y un 26% tienen educación nula, pero la gran mayoria de las defunciones fetales ocurren en mujeres que no tienen educación. 
+
+Sobre datos un poco más especificos se pudo observar que existe relacion entre variables como el departamento de ocurrencia de la defuncion con la atencion medica que se recibe en este departamento, lo que nos indica que a menor antencion medica existe una mayor probabilidad de que la defuncion fetal ocurra. Por lo que se puede concluir que en Guatemala existe una gran desigualdad en cuanto a la atencion medica que se recibe en cada departamento y con este estudio se quiere detectar que departamentos son los que tienen una aistencia medica mas baja, para asi poder mejorarla y constribuir a la reduccion de la cantidad de defunciones fetales.
+
+Por ultimo se pudo observar que existe una tendencia en la reducción de la cantidad de defunciones fetales a lo largo de los años, lo que nos da un poco de esperanza porque se puede visualizar un ciclo que se repite aproximadamente cada año y medio en donde la cantidad de estas reduce.
