@@ -41,15 +41,15 @@ datos <- read.csv("defunciones_fetales.csv")
 
 ### Situacion Problematica
 
-La falta de una atención médica adecuada durante el parto trae múltiples problemas. Por un lado, produce complicaciones que desembocan en múltiples defunciones fetales. Además, también pone en riesgo la salud y vida de la madre. Por lo tanto, el acceso a atención médica adecuada y condiciones higiénicas puede reducir el riesgo de muerte. En Guatemala fallecen anualmente cerca de 2800 fetos, por lo que un sistema de salud adecuado es imprescindible para poder mitigar el peligro de las muertes durante el parto.  
+La falta de una atención médica adecuada durante el parto trae múltiples problemas. Por un lado, produce complicaciones que desembocan en múltiples defunciones fetales. Además, también pone en riesgo la salud y vida de la madre. Por lo tanto, el acceso a atención médica adecuada y condiciones higiénicas puede reducir el riesgo de muerte. En Guatemala fallecen anualmente cerca de 2800 fetos, por lo que un sistema de salud adecuado es imprescindible para poder mitigar el peligro de las muertes durante el parto.
 
-Un estudio por (Kestler & Ambrosio, 2022), mostró que la atención de una emergencia obstétrica por parte de personal capacitado, puede ayudar a reducir en un 23% el riesgo de muerte del feto. También se evidenció que la mayor cantidad de defunciones fetales se da en ámbitos no hospitalarios, con el 81%. Estos partos son atendidos por comadronas o familiares que pueden no tener la preparación necesaria. Algunos de los factores que influyen en la asistencia recibida por las madres pueden ser la edad, la escolaridad de la madre y el acceso a instalaciones adecuadas.  
+Un estudio por (Kestler & Ambrosio, 2022), mostró que la atención de una emergencia obstétrica por parte de personal capacitado, puede ayudar a reducir en un 23% el riesgo de muerte del feto. También se evidenció que la mayor cantidad de defunciones fetales se da en ámbitos no hospitalarios, con el 81%. Estos partos son atendidos por comadronas o familiares que pueden no tener la preparación necesaria. Algunos de los factores que influyen en la asistencia recibida por las madres pueden ser la edad, la escolaridad de la madre y el acceso a instalaciones adecuadas.
 
 Por otra parte, existe una brecha en la cantidad de emergencias atendidas en el área urbana y rural. 83% de los partos atendidos en el área urbana son atendidos en centros adecuados de salud, mientras que en el área rural solo 55%. Desde luego, Guatemala es el departamento que más partos atiende en centros de salud, seguido por Escuintla y Santa Rosa. (MSPAS, 2017)
 
-En Guatemala se puede observar que la asistencia prenatal es muy baja, lo que es realmente delicado porque la falta de acceso a servicios de salud adecuados durante un embarazo puede traer graves consecuencias tanto para la madre como para el feto, en este caso se pude observar que llega al punto de contribuir a gran cantidad de defunciones fetales.  
+En Guatemala se puede observar que la asistencia prenatal es muy baja, lo que es realmente delicado porque la falta de acceso a servicios de salud adecuados durante un embarazo puede traer graves consecuencias tanto para la madre como para el feto, en este caso se pude observar que llega al punto de contribuir a gran cantidad de defunciones fetales.
 
-Con esta situación es necesario tomar medidas para mejorar en generar los servicios de salud en el país, enfocándose en brindar una asistencia prenatal de mejor calidad para reducir cualquier riesgo relacionado con el embarazo de la madre y disminuir las defunciones fetales.  
+Con esta situación es necesario tomar medidas para mejorar en generar los servicios de salud en el país, enfocándose en brindar una asistencia prenatal de mejor calidad para reducir cualquier riesgo relacionado con el embarazo de la madre y disminuir las defunciones fetales.
 
 ### Problema Científico
 
@@ -96,6 +96,7 @@ Dentro de los *objetivos especificos* se encuentra:
 ### 1. Análsis de NA y limpieza
 
 Los datos tienen un encoding en el que se pone un número (como 99 o 999) para indicar que no se tiene información. Por lo tanto es necesario reemplazar estos números por NA.
+
 ```{r echo=F}
 datos$SEXO <- ifelse(datos$SEXO == 9, NA, datos$SEXO)
 datos$SEMGES <- ifelse(datos$SEMGES == 99, NA, datos$SEMGES)
@@ -118,7 +119,6 @@ cualitativas <- c('DEPREG', 'MUPREG', 'MESREG', 'AÑOREG', 'DEPOCU', 'MUPOCU', '
 datos[, cualitativas] <- lapply(datos[, cualitativas], as.factor)
 ```
 
-
 ```{r echo=F}
 colSums(is.na(datos))
 ```
@@ -135,11 +135,10 @@ El conjunto de datos está compuesto por `r nrow(datos)` filas y `r ncol(datos)`
 summary(datos)
 ```
 
-- Es posible observar que la media de semanas de gestación está en 36. Un 75% de las defunciones se dieron abajo de las 44 semanas.
-- La media de la edad de las madres es de 27 años. Un 75% de las madres está por debajo de los 33 años. La madre de mayor edad tiene 57 años.
-- La media de hijos tenidos es de 4. El 75% de las madres tienen 5 hijos o menos. Existe una madre con 32 hijos tenidos. La media de hijos fallecidos es de 1.27. Un 75% de las madres solo han tenido 1 hijo fallecido. Existe una madre que tiene 30 hijos fallecidos.
-- El 75% de las madres tienen 4 o menos hijos vivos. Existe una madre que tiene 16 hijos vivos.
-
+-   Es posible observar que la media de semanas de gestación está en 36. Un 75% de las defunciones se dieron abajo de las 44 semanas.
+-   La media de la edad de las madres es de 27 años. Un 75% de las madres está por debajo de los 33 años. La madre de mayor edad tiene 57 años.
+-   La media de hijos tenidos es de 4. El 75% de las madres tienen 5 hijos o menos. Existe una madre con 32 hijos tenidos. La media de hijos fallecidos es de 1.27. Un 75% de las madres solo han tenido 1 hijo fallecido. Existe una madre que tiene 30 hijos fallecidos.
+-   El 75% de las madres tienen 4 o menos hijos vivos. Existe una madre que tiene 16 hijos vivos.
 
 ### 3. Analisis de las variables
 
@@ -792,7 +791,6 @@ ggplot(data, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=ASISREC)) +
 
 Se puede observar que la mayor cantidad de veces se recibe asistencia médica, que pertenece al código 1. Luego se puede observar que varias emergencias son atendidas por una comadrona. Bastantes defunciones fetales no tuvieron asistencia alguna, lo que corresponde a la porción del código 5.
 
-
 #### 4.12 ¿Cuáles son las 5 semanas de gestación donde más defunciones se dan?
 
 ```{r}
@@ -837,7 +835,6 @@ ggplot(data, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=SITIOOCU)) +
 ```
 
 La mayoría de defunciones se dán en hospitales públicos. Este dato es importante, porque puede indicar alguna deficiencia en este tipo de hospitales. Interesantemente, la siguiente categoría en defunciones fetales es en domicilios, correspondiente al código 6. El seguro social y hospitales privados reportan una cantidad muy similar de defunciones.
-
 
 ## 5. Clustering
 
@@ -1026,12 +1023,9 @@ Características principales del grupo:
 
 Con las caracteristicas mencionadas anteriormente podemos denotar a este grupo como "grupo de madres mayores con mayor cantidad de hijos tenidos con escolaridad mayormente nula".
 
-
-
 ### Resumen del analisis exploratorio
 
-Luego de realizar el analisis exploratorio sobre los datos de las defunciones fetales en Guatemala desde el 2010 hasta el 2019, de forma general podemos concluir que: Guatemala es lastimosamente un pais donde la cantidad de defunciones fetales es muy alta, teniendo un promedio de 2,774 defunciones fetales por año. siendo que más del 50% de las defunciones fetales ocurren enntre la semana 36 a la 50 de gestación pero mayormente se dan en la semana 40 por lo que indica que los fetos ya habian llegado a desarrllarse bastante, esto ocurre en todas las regiones de nuestro pais y muy tristemente en todo tipo de mujeres. 
-La mayoria de las defunciones fetales ocurren en mujeres de entre 20 y 30 años, aunque el 75% de las mujeres tienen menos de 28 años. A pesar de ello podemos encontrar niñas de tan solo 10 año que han tenido que enfrentar la muerte de su hijo. Normalmente las mujeres tienen 1 hijo en el parto pero existe un 6.6% de muejres que tienen 2. De las madres tambien se obtuvo que un 39%, tienen una educación primaria y un 26% tienen educación nula, pero la gran mayoria de las defunciones fetales ocurren en mujeres que no tienen educación. 
+Luego de realizar el analisis exploratorio sobre los datos de las defunciones fetales en Guatemala desde el 2010 hasta el 2019, de forma general podemos concluir que: Guatemala es lastimosamente un pais donde la cantidad de defunciones fetales es muy alta, teniendo un promedio de 2,774 defunciones fetales por año. siendo que más del 50% de las defunciones fetales ocurren enntre la semana 36 a la 50 de gestación pero mayormente se dan en la semana 40 por lo que indica que los fetos ya habian llegado a desarrllarse bastante, esto ocurre en todas las regiones de nuestro pais y muy tristemente en todo tipo de mujeres. La mayoria de las defunciones fetales ocurren en mujeres de entre 20 y 30 años, aunque el 75% de las mujeres tienen menos de 28 años. A pesar de ello podemos encontrar niñas de tan solo 10 año que han tenido que enfrentar la muerte de su hijo. Normalmente las mujeres tienen 1 hijo en el parto pero existe un 6.6% de muejres que tienen 2. De las madres tambien se obtuvo que un 39%, tienen una educación primaria y un 26% tienen educación nula, pero la gran mayoria de las defunciones fetales ocurren en mujeres que no tienen educación.
 
 Sobre datos un poco más especificos se pudo observar que existe relacion entre variables como el departamento de ocurrencia de la defuncion con la atencion medica que se recibe en este departamento, lo que nos indica que a menor antencion medica existe una mayor probabilidad de que la defuncion fetal ocurra. Por lo que se puede concluir que en Guatemala existe una gran desigualdad en cuanto a la atencion medica que se recibe en cada departamento y con este estudio se quiere detectar que departamentos son los que tienen una aistencia medica mas baja, para asi poder mejorarla y constribuir a la reduccion de la cantidad de defunciones fetales.
 
@@ -1039,6 +1033,6 @@ Por ultimo se pudo observar que existe una tendencia en la reducción de la cant
 
 ### Referencias
 
-- Kestler, E., & Ambrosio, G. (2022). Nacido muerto en la comunidad y su relación con la morbilidad materna aguda y grave. Revista Médica (Colegio de Médicos Y Cirujanos de Guatemala), 161(2), 105–112. https://doi.org/10.36109/rmg.v161i2.484MSPAS. (2017). VI  
+-   Kestler, E., & Ambrosio, G. (2022). Nacido muerto en la comunidad y su relación con la morbilidad materna aguda y grave. Revista Médica (Colegio de Médicos Y Cirujanos de Guatemala), 161(2), 105--112. https://doi.org/10.36109/rmg.v161i2.484MSPAS. (2017). VI
 
-- Encuesta Nacional de Salud Materno Infantil (ENSMI) 2014-2015 Informe Final. https://www.ine.gob.gt/sistema/uploads/2021/04/27/20210427195413QDinUvuRa9GjopyXaTuNMXc3gd6Jq1Q1.pdf
+-   Encuesta Nacional de Salud Materno Infantil (ENSMI) 2014-2015 Informe Final. https://www.ine.gob.gt/sistema/uploads/2021/04/27/20210427195413QDinUvuRa9GjopyXaTuNMXc3gd6Jq1Q1.pdf
