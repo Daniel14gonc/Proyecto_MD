@@ -41,9 +41,15 @@ datos <- read.csv("defunciones_fetales.csv")
 
 ### Situacion Problematica
 
-En Guatemala se puede observar que la asistencia prenatal es muy baja, lo que es realmente delicado porque la falta de acceso a servicios de salud adecuados durante un embarazo puede traer graves consecuencias tanto para la madre como para el feto, en este caso se pude observar que llega al punto de contribuir a gran cantidad de defunciones fetales.
+La falta de una atención médica adecuada durante el parto trae múltiples problemas. Por un lado, produce complicaciones que desembocan en múltiples defunciones fetales. Además, también pone en riesgo la salud y vida de la madre. Por lo tanto, el acceso a atención médica adecuada y condiciones higiénicas puede reducir el riesgo de muerte. En Guatemala fallecen anualmente cerca de 2800 fetos, por lo que un sistema de salud adecuado es imprescindible para poder mitigar el peligro de las muertes durante el parto.  
 
-Con esta situación es necesario tomar medidas para mejorar en generar los servicios de salud en el país, enfocándose en brindar una asistencia prenatal de mejor calidad para reducir cualquier riesgo relacionado con el embarazo de la madre y disminuir las defunciones fetales.
+Un estudio por (Kestler & Ambrosio, 2022), mostró que la atención de una emergencia obstétrica por parte de personal capacitado, puede ayudar a reducir en un 23% el riesgo de muerte del feto. También se evidenció que la mayor cantidad de defunciones fetales se da en ámbitos no hospitalarios, con el 81%. Estos partos son atendidos por comadronas o familiares que pueden no tener la preparación necesaria. Algunos de los factores que influyen en la asistencia recibida por las madres pueden ser la edad, la escolaridad de la madre y el acceso a instalaciones adecuadas.  
+
+Por otra parte, existe una brecha en la cantidad de emergencias atendidas en el área urbana y rural. 83% de los partos atendidos en el área urbana son atendidos en centros adecuados de salud, mientras que en el área rural solo 55%. Desde luego, Guatemala es el departamento que más partos atiende en centros de salud, seguido por Escuintla y Santa Rosa. (MSPAS, 2017)
+
+En Guatemala se puede observar que la asistencia prenatal es muy baja, lo que es realmente delicado porque la falta de acceso a servicios de salud adecuados durante un embarazo puede traer graves consecuencias tanto para la madre como para el feto, en este caso se pude observar que llega al punto de contribuir a gran cantidad de defunciones fetales.  
+
+Con esta situación es necesario tomar medidas para mejorar en generar los servicios de salud en el país, enfocándose en brindar una asistencia prenatal de mejor calidad para reducir cualquier riesgo relacionado con el embarazo de la madre y disminuir las defunciones fetales.  
 
 ### Problema Científico
 
@@ -51,13 +57,13 @@ A raiz de que existe esta situación a nivel nacional nos queremos enfocar en de
 
 Por lo mismo el *objetivo principal* de este estudio es:
 
--   Analizar la relación entre la baja asistencia prenatal y la tasa de mortalidad fetal en las diferentes regiones de Guatelama.
+-   Analizar la relación entre la baja asistencia prenatal y la tasa de mortalidad fetal en las diferentes regiones de Guatemala.
 
 Dentro de los *objetivos especificos* se encuentra:
 
 -   Analizar la relacion que existe entre la educacion materna y la asistencia prenatal en Guatemala.
 -   Determinar si existen patrones temporales en las defunciones fetales a nivel nacional.
--   Obtener las primeras 5 regiones que en Guatemala necesitan mejorar la calidad de asistencia prenatal.
+-   Obtener las primeras 5 regiones que necesitan mejorar la calidad de asistencia prenatal en Guatemala.
 
 ### Tipo de cada una de las variables de dataset.
 
@@ -1030,3 +1036,9 @@ La mayoria de las defunciones fetales ocurren en mujeres de entre 20 y 30 años,
 Sobre datos un poco más especificos se pudo observar que existe relacion entre variables como el departamento de ocurrencia de la defuncion con la atencion medica que se recibe en este departamento, lo que nos indica que a menor antencion medica existe una mayor probabilidad de que la defuncion fetal ocurra. Por lo que se puede concluir que en Guatemala existe una gran desigualdad en cuanto a la atencion medica que se recibe en cada departamento y con este estudio se quiere detectar que departamentos son los que tienen una aistencia medica mas baja, para asi poder mejorarla y constribuir a la reduccion de la cantidad de defunciones fetales.
 
 Por ultimo se pudo observar que existe una tendencia en la reducción de la cantidad de defunciones fetales a lo largo de los años, lo que nos da un poco de esperanza porque se puede visualizar un ciclo que se repite aproximadamente cada año y medio en donde la cantidad de estas reduce.
+
+### Referencias
+
+- Kestler, E., & Ambrosio, G. (2022). Nacido muerto en la comunidad y su relación con la morbilidad materna aguda y grave. Revista Médica (Colegio de Médicos Y Cirujanos de Guatemala), 161(2), 105–112. https://doi.org/10.36109/rmg.v161i2.484MSPAS. (2017). VI  
+
+- Encuesta Nacional de Salud Materno Infantil (ENSMI) 2014-2015 Informe Final. https://www.ine.gob.gt/sistema/uploads/2021/04/27/20210427195413QDinUvuRa9GjopyXaTuNMXc3gd6Jq1Q1.pdf
