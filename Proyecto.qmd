@@ -53,17 +53,17 @@ Con esta situación es necesario tomar medidas para mejorar en generar los servi
 
 ### Problema Científico
 
-A raiz de que existe esta situación a nivel nacional nos queremos enfocar en determinar si el factor geografico influye en la calidad de asistencia que se puede brindar, asimismo evaluar la eficiencia de las intervenciones actuales de cada region para proponer posibles soluciones de mejora que aborden las regiones que tengan una calidad de asistencia más baja.
+A raíz de que existe esta situación a nivel nacional nos queremos enfocar en determinar si el factor geográfico influye en la calidad de asistencia que se puede brindar, asimismo evaluar la eficiencia de las intervenciones actuales de cada región para proponer posibles soluciones de mejora que aborden las regiones que tengan una calidad de asistencia más baja.
 
-Por lo mismo el *objetivo principal* de este estudio es:
+Por lo mismo el **objetivo principal** de este estudio es:
 
--   Analizar la relación entre la baja asistencia prenatal y la tasa de mortalidad fetal en las diferentes regiones de Guatemala.
+-   Analizar la relación entre la baja asistencia prenatal y la tasa de mortalidad fetal en las diferentes regiones de Guatemala por medio de algoritmos de aprendizaje de máquina.
 
-Dentro de los *objetivos especificos* se encuentra:
+Dentro de los **objetivos especificos** se encuentra:
 
 -   Analizar la relacion que existe entre la educacion materna y la asistencia prenatal en Guatemala.
--   Determinar si existen patrones temporales en las defunciones fetales a nivel nacional.
--   Obtener las primeras 5 regiones que necesitan mejorar la calidad de asistencia prenatal en Guatemala.
+-   Encontrar patrones temporales en las defunciones fetales a nivel nacional.
+-   Predecir las primeras 5 regiones que necesitan mejorar la calidad de asistencia prenatal en Guatemala.
 
 ### Tipo de cada una de las variables de dataset.
 
@@ -752,7 +752,7 @@ ggplot(data_grouped, aes(x = factor(Escolaridad), y = Casos, fill = factor(ViaPa
        fill = "Vía del parto")
 ```
 
-Se puede observar que el mes de gestacion con mayor probabilidad de tener una defuncion fetal es el mes 1, sin embargo todos los meses estan en un rango similar de probabilidad de tener una defuncion fetal.
+Se puede observar que el que la proporcion de la via por vaginal del parto es mayor en madres con un nivel de escolaridad baja o nula donde las madres con un nivel de escolaridad alta tienen una mayor proporcion de la via por cesarea. Se puede observar que la mayoria de las defunciones fetales ocurren en madres con un nivel de escolaridad baja o nula con una via por cesarea. 
 
 #### 4.10 ¿Existe alguna relación entre la semana de gestacíon y la via del parto?
 
@@ -1030,12 +1030,12 @@ Con las caracteristicas mencionadas anteriormente podemos denotar a este grupo c
 
 ### Resumen del analisis exploratorio
 
-Luego de realizar el analisis exploratorio sobre los datos de las defunciones fetales en Guatemala desde el 2010 hasta el 2019, de forma general podemos concluir que: Guatemala es lastimosamente un pais donde la cantidad de defunciones fetales es muy alta, teniendo un promedio de 2,774 defunciones fetales por año. siendo que más del 50% de las defunciones fetales ocurren enntre la semana 36 a la 50 de gestación pero mayormente se dan en la semana 40 por lo que indica que los fetos ya habian llegado a desarrllarse bastante, esto ocurre en todas las regiones de nuestro pais y muy tristemente en todo tipo de mujeres. 
-La mayoria de las defunciones fetales ocurren en mujeres de entre 20 y 30 años, aunque el 75% de las mujeres tienen menos de 28 años. A pesar de ello podemos encontrar niñas de tan solo 10 año que han tenido que enfrentar la muerte de su hijo. Normalmente las mujeres tienen 1 hijo en el parto pero existe un 6.6% de muejres que tienen 2. De las madres tambien se obtuvo que un 39%, tienen una educación primaria y un 26% tienen educación nula, pero la gran mayoria de las defunciones fetales ocurren en mujeres que no tienen educación. 
+Luego de realizar el análisis exploratorio sobre los datos de las defunciones fetales en Guatemala desde el 2010 hasta el 2019, de forma general podemos concluir que Guatemala es lastimosamente un país donde la cantidad de defunciones fetales es muy alta, teniendo un promedio de 2,774 defunciones fetales por año. Siendo que más del 50% de las defunciones fetales ocurren enntre la semana 36 a la 50 de gestación pero mayormente se dan en la semana 40 por lo que indica que los fetos ya habian llegado a desarrOllarse bastante, esto ocurre en todas las regiones de nuestro país y muy tristemente en todo tipo de mujeres. 
+La mayoria de las defunciones fetales ocurren en mujeres de entre 20 y 30 años, aunque el 75% de las mujeres tienen menos de 28 años. A pesar de ello podemos encontrar niñas de tan solo 10 años que han tenido que enfrentar la muerte de su hijo. Normalmente las mujeres tienen 1 hijo en el parto pero existe un 6.6% de mujeres que tienen 2. De las madres también se obtuvo que un 39%, tienen una educación primaria y un 26% tienen educación nula, pero la gran mayoria de las defunciones fetales ocurren en mujeres que no tienen educación. 
 
-Sobre datos un poco más especificos se pudo observar que existe relacion entre variables como el departamento de ocurrencia de la defuncion con la atencion medica que se recibe en este departamento, lo que nos indica que a menor antencion medica existe una mayor probabilidad de que la defuncion fetal ocurra. Por lo que se puede concluir que en Guatemala existe una gran desigualdad en cuanto a la atencion medica que se recibe en cada departamento y con este estudio se quiere detectar que departamentos son los que tienen una aistencia medica mas baja, para asi poder mejorarla y constribuir a la reduccion de la cantidad de defunciones fetales.
+Sobre datos un poco más específicos se pudo observar que existe relación entre variables como el departamento de ocurrencia de la defunción con la atención médica que se recibe en este departamento, lo que nos indica que a menor antención médica existe una mayor probabilidad de que la defunción fetal ocurra. Por lo que se puede concluir que en Guatemala existe una gran desigualdad en cuanto a la atención médica que se recibe en cada departamento y con este estudio se quiere detectar que departamentos son los que tienen una aistencia médica mas baja, para así poder mejorarla y constribuir a la reducción de la cantidad de defunciones fetales.
 
-Por ultimo se pudo observar que existe una tendencia en la reducción de la cantidad de defunciones fetales a lo largo de los años, lo que nos da un poco de esperanza porque se puede visualizar un ciclo que se repite aproximadamente cada año y medio en donde la cantidad de estas reduce.
+Por último se pudo observar que existe una tendencia en la reducción de la cantidad de defunciones fetales a lo largo de los años, lo que nos da un poco de esperanza porque se puede visualizar un ciclo que se repite aproximadamente cada año y medio en donde la cantidad de estas reduce.
 
 ### Referencias
 
