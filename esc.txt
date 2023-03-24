@@ -1,0 +1,7 @@
+1,Ninguno
+2,Primaria
+3,Basica
+4,Diversificado
+5,Universitario
+6,Post Grado
+9,Ignorado

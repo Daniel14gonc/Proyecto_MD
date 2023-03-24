@@ -1,69 +1,77 @@
 import pandas as pd
 from unidecode import unidecode
 
-# def remove_accents(text):
-#     return unidecode(text)
+def remove_accents(text):
+    return unidecode(text)
 
-# def prepare_dicts():
-#     departamentos = {}
-#     municipios = {}
-#     meses = {}
-#     civil = {}
-#     sitio = {}
-#     with open('dep.txt') as f:
-#         for line in f:
-#             key, value = line.strip().split(',')
-#             departamentos[value] = key
+def prepare_dicts():
+    departamentos = {}
+    municipios = {}
+    meses = {}
+    civil = {}
+    sitio = {}
+    esc = {}
+    with open('dep.txt') as f:
+        for line in f:
+            key, value = line.strip().split(',')
+            departamentos[value] = key
     
-#     with open('mun.txt') as f:
-#         for line in f:
-#             key, value = line.strip().split(',')
-#             municipios[value] = key
+    with open('mun.txt') as f:
+        for line in f:
+            key, value = line.strip().split(',')
+            municipios[value] = key
 
-#     with open('meses.txt') as f:
-#         for line in f:
-#             key, value = line.strip().split(',')
-#             meses[value] = key
+    with open('meses.txt') as f:
+        for line in f:
+            key, value = line.strip().split(',')
+            meses[value] = key
     
-#     with open('civil.txt') as f:
-#         for line in f:
-#             key, value = line.strip().split(',')
-#             civil[value] = key
+    with open('civil.txt') as f:
+        for line in f:
+            key, value = line.strip().split(',')
+            civil[value] = key
 
-#     with open('sitio.txt') as f:
-#         for line in f:
-#             key, value = line.strip().split(',')
-#             sitio[value] = key
+    with open('sitio.txt') as f:
+        for line in f:
+            key, value = line.strip().split(',')
+            sitio[value] = key
 
-#     return departamentos, municipios, meses, civil, sitio
+    with open('esc.txt') as f:
+        for line in f:
+            key, value = line.strip().split(',')
+            esc[value] = key
 
-# departamentos, municipios, meses, civil, sitio = prepare_dicts()
-# print(sitio)
-# sexo = {"Hombre": 1, "Mujer": 2, "Ignorado": 9}
-# tipo = {"Simple": 1, "Doble": 2, "Triple": 3}
-# asis = {'Medico': 1, 'Personal de Enfermeria': 6, 'Paramedico': 2, 'Comadrona': 3, 'Empirico': 4, 'Ninguno': 5, 'Ignorado': 9}
+    return departamentos, municipios, meses, civil, sitio, esc
 
-# def replace_encoding(df):
-#     df['DEPREG'] =  df['DEPREG'].replace(departamentos)
-#     df['DEPOCU'] = df['DEPOCU'].replace(departamentos)
-#     df['DEPREM'] = df['DEPREM'].replace(departamentos)
+departamentos, municipios, meses, civil, sitio, esc = prepare_dicts()
+print(sitio)
+sexo = {"Hombre": 1, "Mujer": 2, "Ignorado": 9}
+tipo = {"Simple": 1, "Doble": 2, "Triple": 3}
+asis = {'Medico': 1, 'Personal de Enfermeria': 6, 'Paramedico': 2, 'Comadrona': 3, 'Empirico': 4, 'Ninguno': 5, 'Ignorado': 9}
 
-#     df['SEXO'] = df['SEXO'].replace(sexo)
+def replace_encoding(df):
+    df['DEPREG'] =  df['DEPREG'].replace(departamentos)
+    df['DEPOCU'] = df['DEPOCU'].replace(departamentos)
+    df['DEPREM'] = df['DEPREM'].replace(departamentos)
 
-#     df['MUPREG'] = df['MUPREG'].replace(municipios)
-#     df['MUPOCU'] = df['MUPOCU'].replace(municipios)
-#     df['MUPREM'] = df['MUPREM'].replace(municipios)
+    df['SEXO'] = df['SEXO'].replace(sexo)
 
-#     df['SITIOOCU'] = df['SITIOOCU'].replace(sitio)
+    df['MUPREG'] = df['MUPREG'].replace(municipios)
+    df['MUPOCU'] = df['MUPOCU'].replace(municipios)
+    df['MUPREM'] = df['MUPREM'].replace(municipios)
 
-#     df['ESCIVM'] = df['ESCIVM'].replace(civil)
+    df['SITIOOCU'] = df['SITIOOCU'].replace(sitio)
 
-#     df['MESREG'] = df['MESREG'].replace(meses)
-#     df['MESOCU'] = df['MESOCU'].replace(meses)
+    df['ESCIVM'] = df['ESCIVM'].replace(civil)
 
-#     df['TIPAR'] = df['TIPAR'].replace(tipo)
+    df['MESREG'] = df['MESREG'].replace(meses)
+    df['MESOCU'] = df['MESOCU'].replace(meses)
 
-#     df['ASISREC'] = df['ASISREC'].replace(asis)
+    df['TIPAR'] = df['TIPAR'].replace(tipo)
+
+    df['ASISREC'] = df['ASISREC'].replace(asis)
+
+    df['ESCOLAM'] = df['ESCOLAM'].replace(esc)
 
 
 # # df_2010 = pd.read_csv("2010.csv")
@@ -81,7 +89,7 @@ from unidecode import unidecode
 
 # # columnas_deseadas = ["DEPREG", "MUPREG", "MESREG", "AÑOREG", "DEPOCU", "MUPOCU", "SEXO", "DIAOCU", "MESOCU", "TIPAR", "CLAPAR", "VIAPAR", "SEMGES", "EDADM", "DEPREM", "MUPREM", "ESCIVM", "NACIOM", "ESCOLAM", "CAUDEF", "ASISREC", "SITIOOCU", "TOHITE", "TOHINM", "TOHIVI"]
 
-otras = ['DEPREG', 'MUPREG', 'MESREG', 'DEPOCU', 'MUPOCU', 'DIAOCU', 'MESOCU', 'SEXO', 'TIPAR', 'EDADM', 'DEPREM', 'MUPREM', 'ESCIVM', 'ASISREC', 'SITIOOCU', 'TOHITE', 'TOHINM', 'TOHIVI']
+otras = ['DEPREG', 'MUPREG', 'MESREG', 'AÑOREG', 'DEPOCU', 'MUPOCU', 'DIAOCU', 'MESOCU', 'SEXO', 'TIPAR', 'EDADM', 'DEPREM', 'MUPREM', 'ESCIVM', 'ASISREC', 'SITIOOCU', 'TOHITE', 'TOHINM', 'TOHIVI', 'ESCOLAM']
 
 # # df_2010 = df_2010[columnas_deseadas]
 # # df_2011 = df_2011[columnas_deseadas]
@@ -106,18 +114,21 @@ for year in years:
     df_defunction = pd.read_csv(year+".csv")
     df_defunction = df_defunction[otras]
     defunc.append(df_defunction)
+    df_born = pd.read_csv(year+"_nac.csv")
+    df_born = df_born[otras]
+    born.append(df_born)
 
 df_defunc = pd.concat(defunc, ignore_index=True)
-# df_born = pd.concat(born, ignore_index=True)
+df_born = pd.concat(born, ignore_index=True)
 
-# df_born = df_born.sample(n=df_defunc.shape[0], random_state=123)
+df_born = df_born.sample(n=df_defunc.shape[0], random_state=123)
 
-# df_born = df_born.applymap(lambda x: remove_accents(x) if isinstance(x, str) else x)
+df_born = df_born.applymap(lambda x: remove_accents(x) if isinstance(x, str) else x)
 
-# replace_encoding(df_born)
+replace_encoding(df_born)
 
-# df = pd.concat([df_defunc, df_born], ignore_index=True)
+df = pd.concat([df_defunc, df_born], ignore_index=True)
 
 print(df_defunc.shape[0])
 
-# df.to_csv("defunciones_fetales2.csv", index=False)
+df.to_csv("defunciones_fetales3.csv", index=False)
