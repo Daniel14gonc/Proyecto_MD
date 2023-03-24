@@ -65,10 +65,10 @@ Por lo mismo el **objetivo principal** de este estudio es:
 
 Dentro de los **objetivos especificos** se encuentra:
 
--   Determinar la relación que existe entre la educación materna y la cantidad de defunsiones en Guatemala.
+-   Determinar la relación que existe entre la educación materna y la cantidad de defunciones en Guatemala.
 -   Encontrar patrones temporales en las defunciones fetales a nivel nacional.
 -   Establecer las variables que más influyen en los partos exitosos y las defunciones fetales.
--   Determinar la relación que la edad de la madre y la cantidad de defunsiones en Guatemala.
+-   Determinar la relación que la edad de la madre y la cantidad de defunciones en Guatemala.
 
 ## Análisis exploratorio
 
@@ -704,9 +704,9 @@ data_grouped_escivm <- datos %>%
 ggplot(data_grouped_escivm, aes(x = ESCIVM, y = Defunciones, fill = ESCIVM)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Defunciones fetales por estado civil de la madre",
+  labs(title = "Nacimientos por estado civil de la madre",
        x = "Estado civil de la madre",
-       y = "Número de defunciones fetales")
+       y = "Número de nacimientos")
 
 ```
 
@@ -773,9 +773,9 @@ data_grouped_escolam <- datos %>%
 ggplot(data_grouped_escolam, aes(x = ESCOLAM, y = Defunciones, fill = factor(ESCOLAM))) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Defunciones fetales por escolaridad de la madre",
+  labs(title = "Nacimientos por escolaridad de la madre",
        x = "Escolaridad de la madre",
-       y = "Número de defunciones fetales")
+       y = "Número de nacimientos")
 
 ```
 
@@ -864,15 +864,15 @@ resultado_chi_cuadrado
 
 Es posible observar que si hay una relación entre la edad de la madre y el resultado del embarazo. Esto se observa en el valor de p, que es menor al nivel de significancia.
 
-#### 4.16 ¿En que sitio de ocurrencia se producen más nacimientos?
+#### 4.16 ¿En que sitio de ocurrencia se producen más defunciones?
 
 ```{r echo=F}
-temp <- datos %>% filter(TIPO == 'vivo')
+temp <- datos %>% filter(TIPO == 'muerto')
 temp <- table(temp$SITIOOCU)
 barplot(temp, col=c("orange", "blue"))
 ```
 
-Se puede observar que la mayor cantidad de nacimientos se dan en un hospital público y luego en domicilios.
+Se puede observar que la mayor cantidad de nacimientos se dan en un hospital público y luego en domicilios. Los domicilios representan un buen porcentaje, sin embargo, 
 
 #### 4.17 Cantidad de defunciones fetales por edad
 
@@ -914,6 +914,8 @@ Es posible observar de la gráfica que mientras más grande es la mujer, se tien
 tabla <- table(datos$TIPO, datos$EDADM)
 assocstats(tabla)$cramer
 ```
+
+Al obtener la medida V de Cramer, se puede observar que existe una relación baja entre la edad de la madre y el resultado del embarazo. Anteriormente se observó que las madres entre los 20 y 30 años son las que más nacimientos y defunciones tienen, entonces no se puede realizar una diferenciación importante.
 
 #### 4.20 Análisis de correspondencia entre la escolaridad de la madre y el resultado del embarazo
 

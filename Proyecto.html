@@ -151,10 +151,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>Dentro de los <strong>objetivos especificos</strong> se encuentra:</p>
 <ul>
-<li>Determinar la relación que existe entre la educación materna y la cantidad de defunsiones en Guatemala.</li>
+<li>Determinar la relación que existe entre la educación materna y la cantidad de defunciones en Guatemala.</li>
 <li>Encontrar patrones temporales en las defunciones fetales a nivel nacional.</li>
 <li>Establecer las variables que más influyen en los partos exitosos y las defunciones fetales.</li>
-<li>Determinar la relación que la edad de la madre y la cantidad de defunsiones en Guatemala.</li>
+<li>Determinar la relación que la edad de la madre y la cantidad de defunciones en Guatemala.</li>
 </ul>
 </section>
 </section>
@@ -813,9 +813,9 @@ X-squared = 10231, df = 105, p-value &lt; 2.2e-16</code></pre>
 <span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_grouped_escivm, <span class="fu">aes</span>(<span class="at">x =</span> ESCIVM, <span class="at">y =</span> Defunciones, <span class="at">fill =</span> ESCIVM)) <span class="sc">+</span></span>
 <span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
 <span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Defunciones fetales por estado civil de la madre"</span>,</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Nacimientos por estado civil de la madre"</span>,</span>
 <span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Estado civil de la madre"</span>,</span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Número de defunciones fetales"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Número de nacimientos"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 1 rows containing missing values (`geom_bar()`).</code></pre>
 </div>
@@ -934,14 +934,14 @@ X-squared = 1500.5, df = 45, p-value &lt; 2.2e-16</code></pre>
 </div>
 <p>Es posible observar que si hay una relación entre la edad de la madre y el resultado del embarazo. Esto se observa en el valor de p, que es menor al nivel de significancia.</p>
 </section>
-<section id="en-que-sitio-de-ocurrencia-se-producen-más-nacimientos" class="level4">
-<h4 class="anchored" data-anchor-id="en-que-sitio-de-ocurrencia-se-producen-más-nacimientos">4.16 ¿En que sitio de ocurrencia se producen más nacimientos?</h4>
+<section id="en-que-sitio-de-ocurrencia-se-producen-más-defunciones" class="level4">
+<h4 class="anchored" data-anchor-id="en-que-sitio-de-ocurrencia-se-producen-más-defunciones">4.16 ¿En que sitio de ocurrencia se producen más defunciones?</h4>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="Proyecto_files/figure-html/unnamed-chunk-60-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Se puede observar que la mayor cantidad de nacimientos se dan en un hospital público y luego en domicilios.</p>
+<p>Se puede observar que la mayor cantidad de nacimientos se dan en un hospital público y luego en domicilios. Los domicilios representan un buen porcentaje, sin embargo,</p>
 </section>
 <section id="cantidad-de-defunciones-fetales-por-edad" class="level4">
 <h4 class="anchored" data-anchor-id="cantidad-de-defunciones-fetales-por-edad">4.17 Cantidad de defunciones fetales por edad</h4>
@@ -974,6 +974,7 @@ X-squared = 1500.5, df = 45, p-value &lt; 2.2e-16</code></pre>
 <pre><code>[1] 0.1563321</code></pre>
 </div>
 </div>
+<p>Al obtener la medida V de Cramer, se puede observar que existe una relación baja entre la edad de la madre y el resultado del embarazo. Anteriormente se observó que las madres entre los 20 y 30 años son las que más nacimientos y defunciones tienen, entonces no se puede realizar una diferenciación importante.</p>
 </section>
 <section id="análisis-de-correspondencia-entre-la-escolaridad-de-la-madre-y-el-resultado-del-embarazo" class="level4">
 <h4 class="anchored" data-anchor-id="análisis-de-correspondencia-entre-la-escolaridad-de-la-madre-y-el-resultado-del-embarazo">4.20 Análisis de correspondencia entre la escolaridad de la madre y el resultado del embarazo</h4>

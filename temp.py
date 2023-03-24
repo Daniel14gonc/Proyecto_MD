@@ -131,4 +131,4 @@ df = pd.concat([df_defunc, df_born], ignore_index=True)
 
 print(df_defunc.shape[0])
 
-df.to_csv("defunciones_fetales3.csv", index=False)
+df_born.to_csv("defunciones_fetales3.csv", index=False)
