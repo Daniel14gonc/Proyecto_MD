@@ -1,6 +1,6 @@
 ---
 title: "Proyecto"
-author: "Diego Franco, Daniel Gonzalez, Angel Carrera"
+author: "Diego Franco, Daniel Gonzalez, Angel Carrera, Daniel Estrada"
 format: html
 editor: visual
 ---
