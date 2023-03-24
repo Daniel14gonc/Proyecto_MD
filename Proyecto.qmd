@@ -31,39 +31,50 @@ library(rpart.plot)
 library(naivebayes)
 library(randomForest)
 library(RColorBrewer)
+library(ca)
+library(vcd)
 ```
 
 ```{r echo=F, include=FALSE}
 datos <- read.csv("defun_nac.csv")
 ```
 
-## Defunciones fetales y nacimientos en Guatemala
+# Defunciones fetales y nacimientos en Guatemala
 
-### Situacion Problematica
+## Definición del problema
 
-La falta de una atención médica adecuada durante el parto trae múltiples problemas. Por un lado, produce complicaciones que desembocan en múltiples defunciones fetales. Además, también pone en riesgo la salud y vida de la madre. Por lo tanto, el acceso a atención médica adecuada y condiciones higiénicas puede reducir el riesgo de muerte. En Guatemala fallecen anualmente cerca de 2800 fetos, por lo que un sistema de salud adecuado es imprescindible para poder mitigar el peligro de las muertes durante el parto.  
+### Situacion Problemática
 
-Un estudio por (Kestler & Ambrosio, 2022), mostró que la atención de una emergencia obstétrica por parte de personal capacitado, puede ayudar a reducir en un 23% el riesgo de muerte del feto. También se evidenció que la mayor cantidad de defunciones fetales se da en ámbitos no hospitalarios, con el 81%. Estos partos son atendidos por comadronas o familiares que pueden no tener la preparación necesaria. Algunos de los factores que influyen en la asistencia recibida por las madres pueden ser la edad, la escolaridad de la madre y el acceso a instalaciones adecuadas.  
+La falta de una atención médica adecuada durante el parto trae múltiples problemas. Por un lado, produce complicaciones que desembocan en múltiples defunciones fetales. Además, también pone en riesgo la salud y vida de la madre. Por lo tanto, el acceso a atención médica adecuada y condiciones higiénicas puede reducir el riesgo de muerte. En Guatemala fallecen anualmente cerca de 2800 fetos, por lo que un sistema de salud adecuado es imprescindible para poder mitigar el peligro de las muertes durante el parto.
+
+Un estudio por (Kestler & Ambrosio, 2022), mostró que la atención de una emergencia obstétrica por parte de personal capacitado, puede ayudar a reducir en un 23% el riesgo de muerte del feto. También se evidenció que la mayor cantidad de defunciones fetales se da en ámbitos no hospitalarios, con el 81%. Estos partos son atendidos por comadronas o familiares que pueden no tener la preparación necesaria. Algunos de los factores que influyen en la asistencia recibida por las madres pueden ser la edad, la escolaridad de la madre y el acceso a instalaciones adecuadas.
 
 Por otra parte, existe una brecha en la cantidad de emergencias atendidas en el área urbana y rural. 83% de los partos atendidos en el área urbana son atendidos en centros adecuados de salud, mientras que en el área rural solo 55%. Desde luego, Guatemala es el departamento que más partos atiende en centros de salud, seguido por Escuintla y Santa Rosa. (MSPAS, 2017)
 
-En Guatemala se puede observar que la asistencia prenatal es muy baja, lo que es realmente delicado porque la falta de acceso a servicios de salud adecuados durante un embarazo puede traer graves consecuencias tanto para la madre como para el feto, en este caso se pude observar que llega al punto de contribuir a gran cantidad de defunciones fetales.  
+En Guatemala se puede observar que la asistencia prenatal es muy baja, lo que es realmente delicado porque la falta de acceso a servicios de salud adecuados durante un embarazo puede traer graves consecuencias tanto para la madre como para el feto, en este caso se pude observar que llega al punto de contribuir a gran cantidad de defunciones fetales.
 
-Con esta situación es necesario tomar medidas para mejorar en generar los servicios de salud en el país, enfocándose en brindar una asistencia prenatal de mejor calidad para reducir cualquier riesgo relacionado con el embarazo de la madre y disminuir las defunciones fetales.  
+Con esta falta de calidad de atención médica, es necesario tener herramientas que ayuden a diagnosticar de una mejor manera las probabilidades de que un feto tenga problemas durante el embarazo. Además, por la falta de personal capacitado, es necesario tener mecanismos que ayuden a mejorar la etapa pre natal de las madres, previniendo emergencias y problemas.
 
 ### Problema Científico
 
-A raíz de que existe esta situación a nivel nacional nos enfocaremos en encontrar que probabilidad de las mujeres embarazadas tiene un riesgo de tener una defunción fetal, de forma que se puedan tomar medidas preventivas y mitigar el riesgo.
+Actualmente en Guatemala no existe una herramienta que permita determinar si una mujer tiene riesgo de perder al bebé en la etapa pre natal o en el parto. A raíz de esto crearemos un modelo que permita determinar la probabilidad de que las mujeres embarazadas tengan una defunción fetal, de forma que se puedan tomar medidas preventivas y mitigar el riesgo.
 
 Por lo mismo el **objetivo principal** de este estudio es:
 
--   Determinar si un embarazo tiene probabilidad de terminar en una defunsión fetal por medio de algoritmos de aprendizaje de máquina.
+-   Determinar la probabilidad de que una mujer embarazada tenga una defunción fetal por medio de algoritmos de aprendizaje de máquina.
 
 Dentro de los **objetivos especificos** se encuentra:
 
--   Determinar la relacion que existe entre la educación materna y la cantidad de defunsiones en Guatemala.
+-   Determinar la relación que existe entre la educación materna y la cantidad de defunsiones en Guatemala.
 -   Encontrar patrones temporales en las defunciones fetales a nivel nacional.
--   Determinar si ... 
+-   Establecer las variables que más influyen en los partos exitosos y las defunciones fetales.
+-   Determinar la relación que la edad de la madre y la cantidad de defunsiones en Guatemala.
+
+## Análisis exploratorio
+
+### Descripción de limpieza hecha del dataset
+
+Se utlizaron las bases de datos sobre defunciones fetales y nacimientos del 2010 al 2019, obtenidas en https://www.ine.gob.gt/ine/vitales/. Los datos de cada año tenían diferentes variables, por lo que se encontraron las variables en común, que son las que se describen en la parte posterior a esta. Se tuvo que realizar un encoding de diferentes variables acorde a un diccionario que se encuentra en la página web previamente indicada. Se agregó una columna a los datos que indica si el resultado del embarazo fue exitoso o fue una defunción fetal.
 
 ### Tipo de cada una de las variables de dataset.
 
@@ -92,6 +103,7 @@ Dentro de los **objetivos especificos** se encuentra:
 ### 1. Análsis de NA y limpieza
 
 Los datos tienen un encoding en el que se pone un número (como 99 o 999) para indicar que no se tiene información. Por lo tanto es necesario reemplazar estos números por NA.
+
 ```{r echo=F}
 datos$SEXO <- ifelse(datos$SEXO == 9, NA, datos$SEXO)
 datos$SEMGES <- ifelse(datos$SEMGES == 99, NA, datos$SEMGES)
@@ -112,7 +124,6 @@ Además, también se tienen muchas variables con valores numéricos pero que son
 cualitativas <- c('DEPREG', 'MUPREG', 'MESREG', 'AÑOREG', 'DEPOCU', 'MUPOCU', 'SEXO', 'DIAOCU', 'MESOCU', 'TIPAR', 'DEPREM', 'MUPREM', 'ESCIVM', 'ESCOLAM', 'ASISREC', 'SITIOOCU')
 datos[, cualitativas] <- lapply(datos[, cualitativas], as.factor)
 ```
-
 
 ```{r echo=F}
 prop.table(colSums(is.na(datos))) * 100
@@ -725,7 +736,7 @@ Al observar el grafico podemos ver que a medida de que se tengan mas hijos es me
 
 #### 4.10 ¿La escolaridad de la madre tienen un impacto en la tasa de defunciones fetales?
 
-```{r }
+```{r echo=F}
 
 # Agrupar por escolaridad de la madre
 data_grouped_escolam <- datos %>%
@@ -749,7 +760,7 @@ Podemos observar que la mayoria de las defunciones fetales ocurren en madres con
 
 #### 4.11 ¿La escolaridad de la madre tienen un impacto en el completamiento del embarazo?
 
-```{r }
+```{r echo=F}
 
 # Agrupar por escolaridad de la madre
 data_grouped_escolam <- datos %>%
@@ -863,38 +874,252 @@ barplot(temp, col=c("orange", "blue"))
 
 Se puede observar que la mayor cantidad de nacimientos se dan en un hospital público y luego en domicilios.
 
-#### 4.17 PCA
+#### 4.17 Cantidad de defunciones fetales por edad
 
 ```{r echo=F}
-pca <- prcomp(datos, scale. = TRUE)
+temp <- datos %>% filter(TIPO == 'muerto')
+temp <- temp %>%
+        group_by(EDADM) %>%
+        summarise(count=n())
 
-# View the results
-summary(pca)
+ggplot(temp, aes(x = EDADM, y = count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  ggtitle("Defunciones por edad de la madre") +
+  xlab("Edad de la madre") +
+  ylab("Número de defunciones")
 ```
 
-#### 4.17 ¿Cuáles son las variables que más influyen en el resultado de un embarazo?
+Al observar las defunciones por edad de la madre, es posible observar que hay un pico cerca de los 25 años. Mientras más grande es una mujer, se tienen menos defunciones. Lo mismo sucede mientras más jóven es una mujer. Es importante notar que las niñas tienen pocas defunciones.
+
+#### 4.18 Cantidad de nacimientos por edad
+
+```{r echo=F}
+temp <- datos %>% filter(TIPO == 'vivo')
+temp <- temp %>%
+        group_by(EDADM) %>%
+        summarise(count=n())
+
+ggplot(temp, aes(x = EDADM, y = count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  ggtitle("Nacimientos por edad de la madre") +
+  xlab("Edad de la madre") +
+  ylab("Número de nacimientos")
+```
+
+Es posible observar de la gráfica que mientras más grande es la mujer, se tienen menos cantidad de nacimientos. Se tiene un máximo cerca de los 25 años.
+
+#### 4.19 Análisis de correspondencia entre la edad de la madre y el resultado del embarazo
+
+```{r echo=F}
+tabla <- table(datos$TIPO, datos$EDADM)
+assocstats(tabla)$cramer
+```
+
+#### 4.20 Análisis de correspondencia entre la escolaridad de la madre y el resultado del embarazo
+
+```{r echo=F}
+tabla <- table(datos$TIPO, datos$ESCOLAM)
+assocstats(tabla)$cramer
+```
+
+Es posible observar por la medida V de Cramer que existe una baja relación entre la escolaridad de la madre y el resultado del embarazo.
+
+#### 4.21 ¿Cuáles son las variables que más influyen en el resultado de un embarazo?
 
 ```{r echo=F}
 
 df <- na.omit(datos)
 df <- select(df, -SEMGES)
-df <- select(df, - TOHINM)
-modelo <- rpart(TIPO ~ ., data = df, method = "class")
+
+modelo <- rpart(TIPO ~ ., data = df, method = "class", control=rpart.control(maxdepth=5))
 rpart.plot(modelo, box.palette = "green")
+modelo$variable
 ```
 
+Al realizar un árbol de decisión para determinar si un embarazo es exitoso o no, es posible observar que se toma la variable de **TOHINM** que es la cantidad de hijos nacidos muertos como la más importante. Luego se tiene **MUPREG** que es el municipio de registro. Esto último indica que existe una relación entre las regiones en donde se da el parto y el éxito del embarazo.
 
-### Resumen del analisis exploratorio 
 
-Luego de realizar el análisis exploratorio sobre los datos de las defunciones fetales en Guatemala desde el 2010 hasta el 2019, de forma general podemos concluir que Guatemala es lastimosamente un país donde la cantidad de defunciones fetales es muy alta, teniendo un promedio de 2,774 defunciones fetales por año. Siendo que más del 50% de las defunciones fetales ocurren enntre la semana 36 a la 50 de gestación pero mayormente se dan en la semana 40 por lo que indica que los fetos ya habian llegado a desarrOllarse bastante, esto ocurre en todas las regiones de nuestro país y muy tristemente en todo tipo de mujeres. 
-La mayoria de las defunciones fetales ocurren en mujeres de entre 20 y 30 años, aunque el 75% de las mujeres tienen menos de 28 años. A pesar de ello podemos encontrar niñas de tan solo 10 años que han tenido que enfrentar la muerte de su hijo. Normalmente las mujeres tienen 1 hijo en el parto pero existe un 6.6% de mujeres que tienen 2. De las madres también se obtuvo que un 39%, tienen una educación primaria y un 26% tienen educación nula, pero la gran mayoria de las defunciones fetales ocurren en mujeres que no tienen educación. 
+## 5. Clustering
 
-Sobre datos un poco más específicos se pudo observar que existe relación entre variables como el departamento de ocurrencia de la defunción con la atención médica que se recibe en este departamento, lo que nos indica que a menor antención médica existe una mayor probabilidad de que la defunción fetal ocurra. Por lo que se puede concluir que en Guatemala existe una gran desigualdad en cuanto a la atención médica que se recibe en cada departamento y con este estudio se quiere detectar que departamentos son los que tienen una aistencia médica mas baja, para así poder mejorarla y constribuir a la reducción de la cantidad de defunciones fetales.
+### 5.1 Determinar si vale la pena agrupar
 
-Por último se pudo observar que existe una tendencia en la reducción de la cantidad de defunciones fetales a lo largo de los años, lo que nos da un poco de esperanza porque se puede visualizar un ciclo que se repite aproximadamente cada año y medio en donde la cantidad de estas reduce.
+```{r echo=F}
+set.seed(123)
+
+h<-hopkins(numericas_norm)
+distancia <- dist(numericas_norm)
+
+# fviz_dist(distancia, show_labels = F)
+```
+
+Se calculó el estadístico de Hopkins para determinar si es válido agrupar los datos. El valor de este es de `r round(h, 2)`, por lo que si vale la pena intentar un agrupamiento.
+
+### 5.2 Determinar la cantidad de grupos para el cluster
+
+#### Elección de variables numéricas para clustering
+
+Al observar la matriz de correlación, es posible observar que la cantidad de hijos vivos tiene una alta correlación con hijos tenidos. Por lo tanto, es posible que exista redundancia. Se quitó la cantidad de hijos vivos para el clustering, de forma que se tenga un mejor agrupamiento
+```{r echo=F}
+numericas_norm <- numericas_norm[, c('SEMGES', 'EDADM', 'TOHITE', 'TOHINM')]
+```
+
+#### Metodo de wss y silueta
+
+```{r echo=F, metodo_wss}
+
+set.seed(123)
+
+wss <- 0
+
+wss <- 0
+for (i in 1:10) {
+  wss[i] <- sum(kmeans(numericas_norm, centers=i)$withinss)
+}
+
+## 5.4 Grafica de lineas y puntos bow
+plot(1:10, wss, type="bow", xlab="Cantidad de grupos", ylab="wss")
+
+#fviz_nbclust(numericas_norm, kmeans, method="wss")
+fviz_nbclust(numericas_norm, kmeans, method="silhouette")
+```
+
+Es posible observar de la gráfica del codo que la cantidad de grupos óptima son 2. La silueta indica lo mismo, así que se procederá a realizar esta cantidad.
+
+### 5.3 Por k medias
+
+#### 5.3.1 Agrupamiento
+
+```{r kmedias}
+set.seed(123)
+km <- kmeans(numericas_norm, centers = 2, iter.max = 100)
+
+# find number of observations in each cluster
+table(km$cluster)
+```
+
+```{r}
+fviz_cluster(km, numericas_norm)
+```
+
+#### 5.3.2 Calidad del agrupamiento segun el método de la silueta
+
+```{r}
+set.seed(123)
+m <- data.frame(withinss = km$withinss, size = km$size)
+ggplot(m, aes(size, withinss)) +
+    geom_point() +
+    geom_smooth(method = "lm") +
+    labs(x = "cardinalidad (size)", y = "magnitud (whithinss)") +
+    geom_text_repel(label = rownames(m))
+silueta <- silhouette(km$cluster, distancia)
+mean <- mean(silueta[, 3])
+mean
+```
+
+La silueta es de `r round(mean, 2)`, lo cual es un valor relativamente alto que indica que con 2 grupos se genera un agrupamiento aceptable.
+
+```{r}
+set.seed(123)
+res <- kcca(numericas_norm, 2)
+importance <- FeatureImpCluster(res, as.data.table(numericas_norm))
+plot(importance)
+barplot(res, bycluster = T)
+```
+
+#### 5.3.3 Clasificacion de los grupos
+
+```{r}
+df <- datos[complete.cases(numericas_temp), ]
+df$grupo <- km$cluster
+
+grupo1 <- df[df$grupo == 1,]
+grupo2 <- df[df$grupo == 2,]
+
+```
+
+##### Grupo 1
+
+```{r}
+summary(grupo1[,numericas])
+str(grupo1)
+sort(prop.table(table(grupo1$DEPREG))*100, decreasing=T)
+sort(prop.table(table(grupo1$TIPAR))*100, decreasing=T)
+sort(prop.table(table(grupo1$DEPREM))*100, decreasing=T)
+sort(prop.table(table(grupo1$ESCIVM))*100, decreasing=T)
+sort(prop.table(table(grupo1$ESCOLAM))*100, decreasing=T)
+sort(prop.table(table(grupo1$SEXO))*100, decreasing=T)
+sort(prop.table(table(grupo1$MESREG))*100, decreasing=T)
+sort(prop.table(table(grupo1$ASISREC))*100, decreasing=T)
+sort(prop.table(table(grupo1$SITIOOCU))*100, decreasing=T)
+```
+
+Características principales del grupo:
+
+- En promedio las madres tienen una edad de 34 años.
+- Las edades de las madres en este grupo van de 26 a 57. El 50% de las madres tienen una edad por debajo de los 33 años.
+- El promedio del total de hijos tenidos es de aproximadamente 5.
+- El 58% de madres de este grupo están casadas. El 41% están solteras.
+- El 46% de las madres del grupo no tuvieron escolaridad alguna. El 33% llegó a primaria y un 12% llegó a diversificado.
+- El 51% de los fetos de este grupo son de sexo masculino y el 48% de sexo femenimo.
+
+
+##### Grupo 2
+
+```{r}
+summary(grupo2[,numericas])
+str(grupo2)
+
+sort(prop.table(table(grupo2$DEPREG))*100, decreasing=T)
+sort(prop.table(table(grupo2$TIPAR))*100, decreasing=T)
+sort(prop.table(table(grupo2$DEPREM))*100, decreasing=T)
+sort(prop.table(table(grupo2$ESCIVM))*100, decreasing=T)
+sort(prop.table(table(grupo2$ESCOLAM))*100, decreasing=T)
+sort(prop.table(table(grupo2$SEXO))*100, decreasing=T)
+sort(prop.table(table(grupo2$MESREG))*100, decreasing=T)
+sort(prop.table(table(grupo2$ASISREC))*100, decreasing=T)
+sort(prop.table(table(grupo2$SITIOOCU))*100, decreasing=T)
+```
+
+Características principales del grupo:
+
+- En promedio las madres tienen una edad de 22 años.
+- Las edades de las madres en este grupo van de 10 a 28 años. El 50% de las madres tienen una edad por debajo de los 22 años.
+- El promedio del total de hijos tenidos es de 2.
+- El 61% de las madres de este grupo son solteras y el 35% son casadas.
+- El 41% de las madres del grupo llegó a primaria. El 27% no tiene educación, un 15% llegó a básico y otro 15% a diversificado.
+- El 51% de los fetos de este grupo son de sexo masculino y el 48% de sexo femenimo.
+
+#### Identificación de grupos
+
+- Grupo 1: Madres de una edad avanzada, casadas, sin escolaridad, con una cantidad alta de hijos tenidos.
+
+- Grupo 2: Madres jóvenes, solteras, con educación primaria, con una cantidad relativamente baja de hijos.
+
+### Resúmen del analisis exploratorio 
+
+Luego de realizar el análisis exploratorio sobre los datos de embarazos en Guatemala desde el 2010 hasta el 2019, de forma general podemos concluir que Guatemala es lastimosamente un país donde la cantidad de defunciones fetales es muy alta, teniendo un promedio de 2,838 defunciones fetales por año, esta cantidad es la misma para los nacimientos por año en el país. Cabe destacar que más del 50% de las defunciones fetales ocurren enntre la semana 36 a la 50 de gestación pero mayormente se dan en la semana 40 por lo que indica que los fetos ya habian llegado a desarrollarse bastante, esto ocurre en todas las regiones de nuestro país y muy tristemente en todo tipo de mujeres. 
+La mayoria de las defunciones fetales ocurren en mujeres de entre 20 y 30 años, aunque el 75% de las mujeres tienen menos de 28 años. A pesar de ello podemos encontrar niñas de tan solo 10 años que han tenido que enfrentar la muerte de su hijo.
+
+Normalmente las mujeres tienen 1 hijo en el parto pero existe un 6.6% de mujeres que tienen 2. De las madres también se obtuvo que un 39%, tienen una educación primaria y un 26% tienen educación nula, se obtuvo que sobre las defunciones fetales ocurren en mujeres que no tienen educación, mientras que la mayor cantidad de nacimientos se da sobre mujeres que al menos tienen un grado primario de educación.
+
+Sobre datos un poco más específicos se pudo observar que la edad de la madre no juega un papel importante ni en la defunción del feto ni en el nacimiento del mísmo, lo cual se puede validar con el 0.15 de la medida V de cramer entre estas varibales. Aunque se pudo observar la tendencia que indica que mientras más grande la mujer se presenta una menor cantidad tanto de nacimientos como de defunciones.
+
+También se determinó que la escolaridad de la madre tienen una correspondencia mucho menor a la de la edad, con un 0.09 de la medida V de cramer se puede afirmar que el nivel educativo de la madre no influye en el resultado del embarazo.
+
+Se logró detectar dos grupos bastante marcados dentro de los datos analisados:
+- El primero son aquellas mujeres que tienen una edad relativamente alta en promedio 33 años, que su nivel educativo es prácticametne nulo, están casadas y tienen una familia numerosa con un promedio de casi 5 hijos en total.
+- El segundo grupo son aquellas mujeres jovenes en promedio 22 años, que en su gran mayoría alcanzan el nievel primario de educación, son soltera y tienen en promedio 2 hijos en total.
+
+Una tendencia interesante que se pudo observar es la reducción de la cantidad de defunciones fetales a lo largo de los años, lo que nos da un poco de esperanza porque se puede visualizar un ciclo que se repite aproximadamente cada año y medio en donde la cantidad de estas reduce.
+
+Por último cabe destacar que al realizar un árbol de decisión las variables que más importancia tienen a la hora de predecir si un embarazo será exitoso o no es la cantidad de hijos nacidos muertos. En segundo lugar se toma el municipio de registro, denotando así una alta relación entre la región en donde se da el parto y el éxito del mismo.
+
+### Conclusiones de siguientes pasos por seguir
+
+A continuación se usarán los principales resultados del análisis exploratorio, como la importancia de las variables de total de hijos tenidos muertos; el municipio de registro; los grupos creados por el clustering; la atención médica recibida, etc. Se investigarán modelos de machine learning que se adequén a los datos obtenidos y que utilicen las variables más significativas para poder realizar predicciones acertadas sobre el riesgo que tiene una madre de tener una defunción fetal. También se determinará si variables como la edad de la madre o su escolaridad pueden ser beneficiosas al momento de aplicar un modelo. Se evaluarán estos modelos y se determinará el nivel de complejidad necesario para que puedan tener un buen resultado. Además, se investigará si se pueden tener resultados secundarios a partir de la aplicación de los modelos.
 
 ### Referencias
 
-- Kestler, E., & Ambrosio, G. (2022). Nacido muerto en la comunidad y su relación con la morbilidad materna aguda y grave. Revista Médica (Colegio de Médicos Y Cirujanos de Guatemala), 161(2), 105–112. https://doi.org/10.36109/rmg.v161i2.484MSPAS. (2017). VI  
+-   Kestler, E., & Ambrosio, G. (2022). Nacido muerto en la comunidad y su relación con la morbilidad materna aguda y grave. Revista Médica (Colegio de Médicos Y Cirujanos de Guatemala), 161(2), 105--112. https://doi.org/10.36109/rmg.v161i2.484MSPAS. (2017). VI
 
-- Encuesta Nacional de Salud Materno Infantil (ENSMI) 2014-2015 Informe Final. https://www.ine.gob.gt/sistema/uploads/2021/04/27/20210427195413QDinUvuRa9GjopyXaTuNMXc3gd6Jq1Q1.pdf
+-   Encuesta Nacional de Salud Materno Infantil (ENSMI) 2014-2015 Informe Final. https://www.ine.gob.gt/sistema/uploads/2021/04/27/20210427195413QDinUvuRa9GjopyXaTuNMXc3gd6Jq1Q1.pdf
