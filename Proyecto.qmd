@@ -78,27 +78,27 @@ Se utlizaron las bases de datos sobre defunciones fetales y nacimientos del 2010
 
 ### Tipo de cada una de las variables de dataset.
 
--   DEPREG (Departamento de registro) -> Categórica nominal
--   MUPREG (Municipio de registro) -> Categórica nominal
--   MESREG (Mes de registro) -> Categórica nominal
--   AÑOREG (Año de registro) -> Categórica nominal
--   DEPOCU (Departamento de ocurrencia) -> Categórica nominal
--   MUPOCU (Municipio de ocurrencia) -> Categórica nominal
--   SEXO (de la defunción fetal) -> Categórica nominal
--   DIAOCU (Día de ocurrencia) -> Categórica nominal
--   MESOCU (Mes de ocurrencia) -> Categórica nominal
--   TIPAR (Tipo de parto) -> Categórica nominal
--   SEMGES (Semanas de gestación) -> Cuantitativa discreta
--   EDADM (Edad de la madre) -> Cuantitativa discreta
--   DEPREM (Departamento de residencia de la madre) -> Categórica nominal
--   MUPREM (Municipio de residencia de la madre) -> Categórica nominal
--   ESCIVM (Estado civil de la madre) -> Categórica nominal
--   ESCOLAM (Escolaridad de la madre) -> Categórica nominal
--   ASISREC (Asistencia recibida) -> Categórica nominal
--   SITIOOCU (Sitio de ocurrencia) -> Categórica nominal
--   TOHITE (Total de hijos tenidos) -> Cuantitativa discreta
--   TOHINM (Total de hijos nacidos muertos) -> Cuantitativa discreta
--   TOHIVI (Total de hijos vivos) -> Cuantitativa discreta
+-   DEPREG (Departamento de registro) -\> Categórica nominal
+-   MUPREG (Municipio de registro) -\> Categórica nominal
+-   MESREG (Mes de registro) -\> Categórica nominal
+-   AÑOREG (Año de registro) -\> Categórica nominal
+-   DEPOCU (Departamento de ocurrencia) -\> Categórica nominal
+-   MUPOCU (Municipio de ocurrencia) -\> Categórica nominal
+-   SEXO (de la defunción fetal) -\> Categórica nominal
+-   DIAOCU (Día de ocurrencia) -\> Categórica nominal
+-   MESOCU (Mes de ocurrencia) -\> Categórica nominal
+-   TIPAR (Tipo de parto) -\> Categórica nominal
+-   SEMGES (Semanas de gestación) -\> Cuantitativa discreta
+-   EDADM (Edad de la madre) -\> Cuantitativa discreta
+-   DEPREM (Departamento de residencia de la madre) -\> Categórica nominal
+-   MUPREM (Municipio de residencia de la madre) -\> Categórica nominal
+-   ESCIVM (Estado civil de la madre) -\> Categórica nominal
+-   ESCOLAM (Escolaridad de la madre) -\> Categórica nominal
+-   ASISREC (Asistencia recibida) -\> Categórica nominal
+-   SITIOOCU (Sitio de ocurrencia) -\> Categórica nominal
+-   TOHITE (Total de hijos tenidos) -\> Cuantitativa discreta
+-   TOHINM (Total de hijos nacidos muertos) -\> Cuantitativa discreta
+-   TOHIVI (Total de hijos vivos) -\> Cuantitativa discreta
 
 ### 1. Análsis de NA y limpieza
 
@@ -141,12 +141,11 @@ El conjunto de datos está compuesto por `r nrow(datos)` filas y `r ncol(datos)`
 summary(datos)
 ```
 
-- Es posible observar que la media de semanas de gestación está en 40, indicando que el embarazo si se realizo con éxito.
-- La media de la edad de las madres es de 26 años. Un 75% de las madres está por debajo de los 32 años. La madre de mayor edad tiene 57 años.
-- La media de hijos tenidos es de 3. El 75% de las madres tienen 4 hijos o menos. Existe una madre con 32 hijos tenidos.
-- La media de hijos fallecidos es de 0.6. Un 75% de las madres solo han tenido 1 hijo fallecido. Existe una madre que tiene 30 hijos fallecidos.
-- La media de hijos vivos es de 2. El 75% de las madres tienen 3 o menos hijos vivos. Existe una madre que tiene 16 hijos vivos.
-
+-   Es posible observar que la media de semanas de gestación está en 40, indicando que el embarazo si se realizo con éxito.
+-   La media de la edad de las madres es de 26 años. Un 75% de las madres está por debajo de los 32 años. La madre de mayor edad tiene 57 años.
+-   La media de hijos tenidos es de 3. El 75% de las madres tienen 4 hijos o menos. Existe una madre con 32 hijos tenidos.
+-   La media de hijos fallecidos es de 0.6. Un 75% de las madres solo han tenido 1 hijo fallecido. Existe una madre que tiene 30 hijos fallecidos.
+-   La media de hijos vivos es de 2. El 75% de las madres tienen 3 o menos hijos vivos. Existe una madre que tiene 16 hijos vivos.
 
 ### 3. Analisis de las variables
 
@@ -479,7 +478,6 @@ barplot(tipoP, col=c("orange", "blue"))
 
 La gráfica muestra que la mayoria de los partos fueron de tipo simple.
 
-
 A continuación se muestra la frecuencia de **DEPREM** el departamento de residencia de la madre.
 
 ```{r echo=F}
@@ -667,7 +665,6 @@ promedio_nacimientos <- mean(data_grouped_anoreg$nacimientos)
 cat("El promedio de nacimientos por año es:", promedio_nacimientos)
 ```
 
-
 #### 4.7 ¿El estado civil de la madre tiene alguna relación con la defunción fetal?
 
 ```{r}
@@ -711,7 +708,6 @@ ggplot(data_grouped_escivm, aes(x = ESCIVM, y = Defunciones, fill = ESCIVM)) +
 ```
 
 Al observar la tabla podemos ver que la mayoria de los embarazos completados ocurrieron en madres solteras.
-
 
 #### 4.9 ¿Las madres con más hijos tenidos tienen una mayor proporción de defunciones fetales?
 
@@ -757,7 +753,6 @@ ggplot(data_grouped_escolam, aes(x = ESCOLAM, y = Defunciones, fill = factor(ESC
 
 Podemos observar que la mayoria de las defunciones fetales ocurren en madres con un nivel de escolaridad baja o nula.
 
-
 #### 4.11 ¿La escolaridad de la madre tienen un impacto en el completamiento del embarazo?
 
 ```{r echo=F}
@@ -780,7 +775,6 @@ ggplot(data_grouped_escolam, aes(x = ESCOLAM, y = Defunciones, fill = factor(ESC
 ```
 
 Podemos observar que la mayoria de los nacimientos ocurren en madres con un nivel de escolaridad primaria.
-
 
 #### 4.12 ¿Cómo se distribuye la asistencia médica recibida?
 
@@ -807,7 +801,6 @@ ggplot(data, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=ASISREC)) +
 
 Se puede observar que la mayor cantidad de veces se recibe asistencia médica, que pertenece al código 1. Luego se puede observar que varias emergencias son atendidas por una comadrona. Bastantes defunciones fetales no tuvieron asistencia alguna, lo que corresponde a la porción del código 5.
 
-
 #### 4.13 ¿Cuáles son las 5 semanas de gestación donde más defunciones se dan?
 
 ```{r}
@@ -817,17 +810,19 @@ temp <- temp %>%
         group_by(SEMGES) %>%
         summarise(count=n())
 
-top_semanas <- temp %>%
-      top_n(n=5, wt=count)
+temp <- temp[order(temp$count),]
+temp <- head(temp)
 
-ggplot(top_semanas, aes(x = SEMGES, y = count)) +
+temp$SEMGES
+
+ggplot(temp, aes(x = SEMGES, y = count)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   ggtitle("Top 5 semanas con más defunciones") +
   xlab("Semanas de gestación") +
   ylab("Número de defunciones")
 ```
 
-Las semanas donde más defunciones se dan van de la 36 a la 40. La mayor cantidad de defunciones se da en la semana 40, que generalmente es la semana donde se da el parto. Por lo tanto, es posible decir que la mayor cantidad de defunciones fetales se dan en el parto.
+Se puede observar que la mayor cantidad de defunciones están en las primeras semanas, igualmente que en la última.
 
 #### 4.14 ¿Cuál es la frecuencia del sitio de ocurrencia de los partos?
 
@@ -872,7 +867,7 @@ temp <- table(temp$SITIOOCU)
 barplot(temp, col=c("orange", "blue"))
 ```
 
-Se puede observar que la mayor cantidad de nacimientos se dan en un hospital público y luego en domicilios. Los domicilios representan un buen porcentaje, sin embargo, 
+Se puede observar que la mayor cantidad de nacimientos se dan en un hospital público y luego en domicilios. Los domicilios representan un buen porcentaje, sin embargo,
 
 #### 4.17 Cantidad de defunciones fetales por edad
 
@@ -940,7 +935,6 @@ modelo$variable
 
 Al realizar un árbol de decisión para determinar si un embarazo es exitoso o no, es posible observar que se toma la variable de **TOHINM** que es la cantidad de hijos nacidos muertos como la más importante. Luego se tiene **MUPREG** que es el municipio de registro. Esto último indica que existe una relación entre las regiones en donde se da el parto y el éxito del embarazo.
 
-
 ## 5. Clustering
 
 ### 5.1 Determinar si vale la pena agrupar
@@ -961,6 +955,7 @@ Se calculó el estadístico de Hopkins para determinar si es válido agrupar los
 #### Elección de variables numéricas para clustering
 
 Al observar la matriz de correlación, es posible observar que la cantidad de hijos vivos tiene una alta correlación con hijos tenidos. Por lo tanto, es posible que exista redundancia. Se quitó la cantidad de hijos vivos para el clustering, de forma que se tenga un mejor agrupamiento
+
 ```{r echo=F}
 numericas_norm <- numericas_norm[, c('SEMGES', 'EDADM', 'TOHITE', 'TOHINM')]
 ```
@@ -1057,13 +1052,12 @@ sort(prop.table(table(grupo1$SITIOOCU))*100, decreasing=T)
 
 Características principales del grupo:
 
-- En promedio las madres tienen una edad de 34 años.
-- Las edades de las madres en este grupo van de 26 a 57. El 50% de las madres tienen una edad por debajo de los 33 años.
-- El promedio del total de hijos tenidos es de aproximadamente 5.
-- El 58% de madres de este grupo están casadas. El 41% están solteras.
-- El 46% de las madres del grupo no tuvieron escolaridad alguna. El 33% llegó a primaria y un 12% llegó a diversificado.
-- El 51% de los fetos de este grupo son de sexo masculino y el 48% de sexo femenimo.
-
+-   En promedio las madres tienen una edad de 34 años.
+-   Las edades de las madres en este grupo van de 26 a 57. El 50% de las madres tienen una edad por debajo de los 33 años.
+-   El promedio del total de hijos tenidos es de aproximadamente 5.
+-   El 58% de madres de este grupo están casadas. El 41% están solteras.
+-   El 46% de las madres del grupo no tuvieron escolaridad alguna. El 33% llegó a primaria y un 12% llegó a diversificado.
+-   El 51% de los fetos de este grupo son de sexo masculino y el 48% de sexo femenimo.
 
 ##### Grupo 2
 
@@ -1084,23 +1078,22 @@ sort(prop.table(table(grupo2$SITIOOCU))*100, decreasing=T)
 
 Características principales del grupo:
 
-- En promedio las madres tienen una edad de 22 años.
-- Las edades de las madres en este grupo van de 10 a 28 años. El 50% de las madres tienen una edad por debajo de los 22 años.
-- El promedio del total de hijos tenidos es de 2.
-- El 61% de las madres de este grupo son solteras y el 35% son casadas.
-- El 41% de las madres del grupo llegó a primaria. El 27% no tiene educación, un 15% llegó a básico y otro 15% a diversificado.
-- El 51% de los fetos de este grupo son de sexo masculino y el 48% de sexo femenimo.
+-   En promedio las madres tienen una edad de 22 años.
+-   Las edades de las madres en este grupo van de 10 a 28 años. El 50% de las madres tienen una edad por debajo de los 22 años.
+-   El promedio del total de hijos tenidos es de 2.
+-   El 61% de las madres de este grupo son solteras y el 35% son casadas.
+-   El 41% de las madres del grupo llegó a primaria. El 27% no tiene educación, un 15% llegó a básico y otro 15% a diversificado.
+-   El 51% de los fetos de este grupo son de sexo masculino y el 48% de sexo femenimo.
 
 #### Identificación de grupos
 
-- Grupo 1: Madres de una edad avanzada, casadas, sin escolaridad, con una cantidad alta de hijos tenidos.
+-   Grupo 1: Madres de una edad avanzada, casadas, sin escolaridad, con una cantidad alta de hijos tenidos.
 
-- Grupo 2: Madres jóvenes, solteras, con educación primaria, con una cantidad relativamente baja de hijos.
+-   Grupo 2: Madres jóvenes, solteras, con educación primaria, con una cantidad relativamente baja de hijos.
 
-### Resúmen del analisis exploratorio 
+### Resúmen del analisis exploratorio
 
-Luego de realizar el análisis exploratorio sobre los datos de embarazos en Guatemala desde el 2010 hasta el 2019, de forma general podemos concluir que Guatemala es lastimosamente un país donde la cantidad de defunciones fetales es muy alta, teniendo un promedio de 2,838 defunciones fetales por año, esta cantidad es la misma para los nacimientos por año en el país. Cabe destacar que más del 50% de las defunciones fetales ocurren enntre la semana 36 a la 50 de gestación pero mayormente se dan en la semana 40 por lo que indica que los fetos ya habian llegado a desarrollarse bastante, esto ocurre en todas las regiones de nuestro país y muy tristemente en todo tipo de mujeres. 
-La mayoria de las defunciones fetales ocurren en mujeres de entre 20 y 30 años, aunque el 75% de las mujeres tienen menos de 28 años. A pesar de ello podemos encontrar niñas de tan solo 10 años que han tenido que enfrentar la muerte de su hijo.
+Luego de realizar el análisis exploratorio sobre los datos de embarazos en Guatemala desde el 2010 hasta el 2019, de forma general podemos concluir que Guatemala es lastimosamente un país donde la cantidad de defunciones fetales es muy alta, teniendo un promedio de 2,838 defunciones fetales por año, esta cantidad es la misma para los nacimientos por año en el país. Cabe destacar que más del 50% de las defunciones fetales ocurren enntre la semana 36 a la 50 de gestación pero mayormente se dan en la semana 40 por lo que indica que los fetos ya habian llegado a desarrollarse bastante, esto ocurre en todas las regiones de nuestro país y muy tristemente en todo tipo de mujeres. La mayoria de las defunciones fetales ocurren en mujeres de entre 20 y 30 años, aunque el 75% de las mujeres tienen menos de 28 años. A pesar de ello podemos encontrar niñas de tan solo 10 años que han tenido que enfrentar la muerte de su hijo.
 
 Normalmente las mujeres tienen 1 hijo en el parto pero existe un 6.6% de mujeres que tienen 2. De las madres también se obtuvo que un 39%, tienen una educación primaria y un 26% tienen educación nula, se obtuvo que sobre las defunciones fetales ocurren en mujeres que no tienen educación, mientras que la mayor cantidad de nacimientos se da sobre mujeres que al menos tienen un grado primario de educación.
 
@@ -1108,9 +1101,7 @@ Sobre datos un poco más específicos se pudo observar que la edad de la madre n
 
 También se determinó que la escolaridad de la madre tienen una correspondencia mucho menor a la de la edad, con un 0.09 de la medida V de cramer se puede afirmar que el nivel educativo de la madre no influye en el resultado del embarazo.
 
-Se logró detectar dos grupos bastante marcados dentro de los datos analisados:
-- El primero son aquellas mujeres que tienen una edad relativamente alta en promedio 33 años, que su nivel educativo es prácticametne nulo, están casadas y tienen una familia numerosa con un promedio de casi 5 hijos en total.
-- El segundo grupo son aquellas mujeres jovenes en promedio 22 años, que en su gran mayoría alcanzan el nievel primario de educación, son soltera y tienen en promedio 2 hijos en total.
+Se logró detectar dos grupos bastante marcados dentro de los datos analisados: - El primero son aquellas mujeres que tienen una edad relativamente alta en promedio 33 años, que su nivel educativo es prácticametne nulo, están casadas y tienen una familia numerosa con un promedio de casi 5 hijos en total. - El segundo grupo son aquellas mujeres jovenes en promedio 22 años, que en su gran mayoría alcanzan el nievel primario de educación, son soltera y tienen en promedio 2 hijos en total.
 
 Una tendencia interesante que se pudo observar es la reducción de la cantidad de defunciones fetales a lo largo de los años, lo que nos da un poco de esperanza porque se puede visualizar un ciclo que se repite aproximadamente cada año y medio en donde la cantidad de estas reduce.
 
