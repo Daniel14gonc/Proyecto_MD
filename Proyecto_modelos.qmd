@@ -1,0 +1,177 @@
+---
+title: "Proyecto"
+author: "Diego Franco, Daniel Gonzalez, Angel Carrera"
+format: html
+editor: visual
+---
+
+```{r echo=F, include=FALSE}
+library(nortest)
+library(dplyr)
+library(hopkins)
+library(factoextra)
+library(ggrepel)
+library(cluster)
+library(flexclust)
+library(FeatureImpCluster)
+library(stringr)
+library(tidyr)
+library(stats)
+library(graphics)
+library(NbClust)
+library(mclust)
+library(GGally)
+library(corrplot)
+library(caret)
+library(ggplot2)
+library(kableExtra)
+library(e1071)
+library(rpart)
+library(rpart.plot)
+library(naivebayes)
+library(randomForest)
+library(RColorBrewer)
+library(ca)
+library(vcd)
+library(xgboost)
+```
+
+```{r echo=F, include=FALSE}
+datos <- read.csv("defun_nac.csv")
+```
+
+### 1. Análsis de NA y limpieza
+
+Los datos tienen un encoding en el que se pone un número (como 99 o 999) para indicar que no se tiene información. Por lo tanto es necesario reemplazar estos números por NA.
+
+```{r echo=F}
+datos$SEXO <- ifelse(datos$SEXO == 9, NA, datos$SEXO)
+datos$SEMGES <- ifelse(datos$SEMGES == 99, NA, datos$SEMGES)
+datos$EDADM <- ifelse(datos$EDADM == 999, NA, datos$EDADM)
+datos$DEPREM <- ifelse(datos$DEPREM == 9999, NA, datos$DEPREM)
+datos$MUPREM <- ifelse(datos$MUPREM == 9999, NA, datos$MUPREM)
+datos$ESCIVM <- ifelse(datos$ESCIVM == 9, NA, datos$ESCIVM)
+datos$ESCOLAM <- ifelse(datos$ESCOLAM == 9, NA, datos$ESCOLAM)
+datos$SITIOOCU <- ifelse(datos$SITIOOCU == 9, NA, datos$SITIOOCU)
+datos$TOHITE <- ifelse(datos$TOHITE == 99, NA, datos$TOHITE)
+datos$TOHINM <- ifelse(datos$TOHINM == 99, NA, datos$TOHINM)
+datos$TOHIVI <- ifelse(datos$TOHIVI == 99, NA, datos$TOHIVI)
+```
+
+Además, también se tienen muchas variables con valores numéricos pero que son cualitativas. Por lo tanto, se conviertieron en factores.
+
+```{r echo=F}
+cualitativas <- c('DEPREG', 'MUPREG', 'MESREG', 'AÑOREG', 'DEPOCU', 'MUPOCU', 'SEXO', 'DIAOCU', 'MESOCU', 'TIPAR', 'DEPREM', 'MUPREM', 'ESCIVM', 'ESCOLAM', 'ASISREC', 'SITIOOCU')
+datos[, cualitativas] <- lapply(datos[, cualitativas], as.factor)
+```
+
+
+## Eliminación de variables no significativas
+
+```{r}
+datos <- na.omit(datos)
+datos <- select(datos, -SEMGES, -MUPREG, -MUPOCU, -DEPOCU, -MUPREM, -DEPREG, -TOHIVI)
+```
+
+## Creación de train y test
+
+
+```{r}
+porcentaje <- 0.7
+set.seed(123)
+
+corte <- sample(nrow(datos), nrow(datos) * porcentaje)
+train <- datos[corte, ]
+test <- datos[-corte, ]
+```
+
+
+## SVM
+
+```{r}
+# library(dplyr)
+# datos <- datos %>%
+#   mutate(TIPO = ifelse(TIPO == "vivo", 0, 1))
+
+# datos$TIPO <- as.factor(datos$TIPO)
+# # Dividir los datos en conjuntos de entrenamiento y prueba
+# porcentaje <- 0.7
+# set.seed(123)
+
+# corte <- sample(nrow(datos), nrow(datos) * porcentaje)
+# train <- datos[corte, ]
+# test <- datos[-corte, ]
+
+# modeloSVM <- svm(TIPO~., data = test, kernel = "linear", cost = 10, gamma = 0.1)
+# print(modeloSVM)
+# plot(modeloSVM, train)
+
+# svmpredicciones <- predict(modeloSVM, test)
+# svmConfusionMatrix <- table(svmpredicciones, test$TIPO)
+# print(svmConfusionMatrix)
+```
+
+
+## XGBoost
+
+```{r}
+data <- datos
+cualitativas2 <- c('MESREG', 'AÑOREG', 'SEXO', 'DIAOCU', 'MESOCU', 'TIPAR', 'ESCIVM', 'ESCOLAM', 'ASISREC', 'SITIOOCU')
+cualitativas2_indices <- which(colnames(data) %in% cualitativas2)
+data$TIPO <- ifelse(data$TIPO == "muerto", 1, 0)
+
+encoding_model <- dummyVars(~., data = data[, cualitativas2_indices], fullRank = TRUE)
+
+encoded_data <- predict(encoding_model, newdata = data[, cualitativas2_indices])
+
+final_data <- cbind(data[, !cualitativas2_indices], encoded_data)
+final_data$TIPO <- data$TIPO
+
+
+
+porcentaje <- 0.7
+set.seed(123)
+
+corte <- sample(nrow(final_data), nrow(final_data) * porcentaje)
+train1 <- final_data[corte, ]
+test1 <- final_data[-corte, ]
+
+
+xgb_model <- xgboost(data = as.matrix(train1[, -which(colnames(train1) == "TIPO")]), 
+                     label = train1[, c('TIPO')],
+                     nrounds = 50)
+
+```
+
+## Random Forest
+
+```{r}
+# set.seed(123)
+# modelo_rf <- randomForest(TIPO ~ ., data = train, ntree = 100)
+
+
+# predicciones <- predict(modelo_rf, test)
+
+# tabla_confusion <- tle(pr
+```
+
+### Parameter tuning
+```{r}
+# control <- trainControl(method = "cv", number = 5)
+
+# ntree_valores <- c(50, 100, 150, 200, 250)
+
+# ajuste <- train(TIPO ~ ., data = train, method = "rf", trControl = control,
+#                 tuneGrid = data.frame(ntree = ntree_valores))
+
+
+# print(ajuste)
+
+# mejor_ntree <- ajuste$bestTune$ntree
+
+# predicciones, test$TIPO)
+# print(tabla_confusion)
+
+```
+
+## Regresión logística regularizada

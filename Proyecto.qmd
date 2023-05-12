@@ -926,7 +926,7 @@ Es posible observar por la medida V de Cramer que existe una baja relación entr
 ```{r echo=F}
 
 df <- na.omit(datos)
-df <- select(df, -SEMGES)
+df <- select(df, -SEMGES, -MUPREG, -MUPOCU, -DEPOCU, -MUPREM, -DEPREG)
 
 modelo <- rpart(TIPO ~ ., data = df, method = "class", control=rpart.control(maxdepth=5))
 rpart.plot(modelo, box.palette = "green")
@@ -1116,3 +1116,5 @@ A continuación se usarán los principales resultados del análisis exploratorio
 -   Kestler, E., & Ambrosio, G. (2022). Nacido muerto en la comunidad y su relación con la morbilidad materna aguda y grave. Revista Médica (Colegio de Médicos Y Cirujanos de Guatemala), 161(2), 105--112. https://doi.org/10.36109/rmg.v161i2.484MSPAS. (2017). VI
 
 -   Encuesta Nacional de Salud Materno Infantil (ENSMI) 2014-2015 Informe Final. https://www.ine.gob.gt/sistema/uploads/2021/04/27/20210427195413QDinUvuRa9GjopyXaTuNMXc3gd6Jq1Q1.pdf
+
+
