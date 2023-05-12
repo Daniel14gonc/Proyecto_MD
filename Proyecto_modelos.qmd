@@ -146,31 +146,30 @@ xgb_model <- xgboost(data = as.matrix(train1[, -which(colnames(train1) == "TIPO"
 ## Random Forest
 
 ```{r}
-# set.seed(123)
-# modelo_rf <- randomForest(TIPO ~ ., data = train, ntree = 100)
+set.seed(123)
+modelo_rf <- randomForest(TIPO ~ ., data = train, ntree = 100)
 
 
-# predicciones <- predict(modelo_rf, test)
+predicciones <- predict(modelo_rf, test)
 
-# tabla_confusion <- tle(pr
+tabla_confusion <- table(predicciones, test$TIPO)
+print(tabla_confusion)
 ```
 
 ### Parameter tuning
 ```{r}
-# control <- trainControl(method = "cv", number = 5)
+control <- trainControl(method = "cv", number = 5)
 
-# ntree_valores <- c(50, 100, 150, 200, 250)
+ntree_valores <- c(50, 100, 150, 200, 250)
 
-# ajuste <- train(TIPO ~ ., data = train, method = "rf", trControl = control,
-#                 tuneGrid = data.frame(ntree = ntree_valores))
+ajuste <- train(TIPO ~ ., data = train, method = "rf", trControl = control,
+                tuneGrid = data.frame(ntree = ntree_valores))
 
 
-# print(ajuste)
+print(ajuste)
 
-# mejor_ntree <- ajuste$bestTune$ntree
-
-# predicciones, test$TIPO)
-# print(tabla_confusion)
+mejor_ntree <- ajuste$bestTune$ntree
+print(mejor_ntree)
 
 ```
 
