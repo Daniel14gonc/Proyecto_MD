@@ -145,7 +145,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="eliminación-de-variables-no-significativas">Eliminación de variables no significativas</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(datos)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">select</span>(datos, <span class="sc">-</span>SEMGES, <span class="sc">-</span>MUPREG, <span class="sc">-</span>MUPOCU, <span class="sc">-</span>DEPOCU, <span class="sc">-</span>MUPREM, <span class="sc">-</span>DEPREG, <span class="sc">-</span>TOHIVI)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">select</span>(datos, <span class="sc">-</span>SEMGES, <span class="sc">-</span>MUPREG, <span class="sc">-</span>MUPOCU, <span class="sc">-</span>DEPOCU, <span class="sc">-</span>MUPREM, <span class="sc">-</span>DEPREG, <span class="sc">-</span>DEPREM, <span class="sc">-</span>TOHITE, <span class="sc">-</span>AÑOREG)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># colnames(datos)[2] &lt;- 'ANOREG'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="creación-de-train-y-test" class="level2">
@@ -187,113 +188,308 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="xgboost" class="level2">
 <h2 class="anchored" data-anchor-id="xgboost">XGBoost</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> datos</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cualitativas2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'MESREG'</span>, <span class="st">'AÑOREG'</span>, <span class="st">'SEXO'</span>, <span class="st">'DIAOCU'</span>, <span class="st">'MESOCU'</span>, <span class="st">'TIPAR'</span>, <span class="st">'ESCIVM'</span>, <span class="st">'ESCOLAM'</span>, <span class="st">'ASISREC'</span>, <span class="st">'SITIOOCU'</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>cualitativas2_indices <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">colnames</span>(data) <span class="sc">%in%</span> cualitativas2)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>TIPO <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(data<span class="sc">$</span>TIPO <span class="sc">==</span> <span class="st">"muerto"</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>encoding_model <span class="ot">&lt;-</span> <span class="fu">dummyVars</span>(<span class="sc">~</span>., <span class="at">data =</span> data[, cualitativas2_indices], <span class="at">fullRank =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>encoded_data <span class="ot">&lt;-</span> <span class="fu">predict</span>(encoding_model, <span class="at">newdata =</span> data[, cualitativas2_indices])</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>final_data <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data[, <span class="sc">!</span>cualitativas2_indices], encoded_data)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>final_data<span class="sc">$</span>TIPO <span class="ot">&lt;-</span> data<span class="sc">$</span>TIPO</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> datos</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>cualitativas2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'MESREG'</span>, <span class="st">'AÑOREG'</span>, <span class="st">'SEXO'</span>, <span class="st">'DIAOCU'</span>, <span class="st">'MESOCU'</span>, <span class="st">'TIPAR'</span>, <span class="st">'ESCIVM'</span>, <span class="st">'ESCOLAM'</span>, <span class="st">'ASISREC'</span>, <span class="st">'SITIOOCU'</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>cualitativas2_indices <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">colnames</span>(data) <span class="sc">%in%</span> cualitativas2)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>TIPO <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(data<span class="sc">$</span>TIPO <span class="sc">==</span> <span class="st">"muerto"</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>encoding_model <span class="ot">&lt;-</span> <span class="fu">dummyVars</span>(<span class="sc">~</span>., <span class="at">data =</span> data[, cualitativas2_indices], <span class="at">fullRank =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>encoded_data <span class="ot">&lt;-</span> <span class="fu">predict</span>(encoding_model, <span class="at">newdata =</span> data[, cualitativas2_indices])</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>final_data <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data[, <span class="sc">!</span>cualitativas2_indices], encoded_data)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>final_data<span class="sc">$</span>TIPO <span class="ot">&lt;-</span> data<span class="sc">$</span>TIPO</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>porcentaje <span class="ot">&lt;-</span> <span class="fl">0.7</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>porcentaje <span class="ot">&lt;-</span> <span class="fl">0.7</span></span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>corte <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(final_data), <span class="fu">nrow</span>(final_data) <span class="sc">*</span> porcentaje)</span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>train1 <span class="ot">&lt;-</span> final_data[corte, ]</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>test1 <span class="ot">&lt;-</span> final_data[<span class="sc">-</span>corte, ]</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>xgb_model <span class="ot">&lt;-</span> <span class="fu">xgboost</span>(<span class="at">data =</span> <span class="fu">as.matrix</span>(train1[, <span class="sc">-</span><span class="fu">which</span>(<span class="fu">colnames</span>(train1) <span class="sc">==</span> <span class="st">"TIPO"</span>)]), </span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>                     <span class="at">label =</span> train1[, <span class="fu">c</span>(<span class="st">'TIPO'</span>)],</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>                     <span class="at">nrounds =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>test1 <span class="ot">&lt;-</span> final_data[<span class="sc">-</span>corte, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="parameter-tunning" class="level3">
+<h3 class="anchored" data-anchor-id="parameter-tunning">Parameter tunning</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set.seed(123)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># train1$TIPO &lt;- train$TIPO</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># task &lt;- makeClassifTask(data = train1, target = "TIPO")</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># param_grid &lt;- makeParamSet(</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   makeDiscreteParam("nrounds", values = seq(100, 500, by = 20)),</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   makeIntegerParam("max_depth", lower = 3, upper = 10),</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   makeNumericParam("eta", lower = 0.01, upper = 0.3)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># control_tune &lt;- makeTuneControlRandom(maxit = 30)</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># resampling &lt;- makeResampleDesc("CV", iters = 5)</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># measure &lt;- acc</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># tuned_model &lt;- tuneParams(</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#   learner = "classif.xgboost",  # For classification, use "classif.xgboost"; for regression, use "regr.xgboost"</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#   task = task,</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   resampling = resampling,</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   measures = measure,</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   par.set = param_grid,</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   control = control_tune,</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#   show.info = TRUE</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co"># best_params &lt;- tuned_model$x</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co"># best_params</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>xgb_model <span class="ot">&lt;-</span> <span class="fu">xgboost</span>(<span class="at">data =</span> <span class="fu">as.matrix</span>(train1[, <span class="sc">-</span><span class="fu">which</span>(<span class="fu">colnames</span>(train1) <span class="sc">==</span> <span class="st">"TIPO"</span>)]), </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">label =</span> train1[, <span class="fu">c</span>(<span class="st">'TIPO'</span>)],</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">nrounds =</span> <span class="dv">500</span>, <span class="at">max_depth=</span><span class="dv">4</span>, <span class="at">eta=</span><span class="fl">0.2254931</span>, <span class="at">verbose=</span><span class="dv">0</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(xgb_model, <span class="fu">as.matrix</span>(test1[, <span class="sc">-</span><span class="fu">which</span>(<span class="fu">colnames</span>(test1) <span class="sc">==</span> <span class="st">"TIPO"</span>)]))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(predictions <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">factor</span>(predictions)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># datos2 &lt;- as.data.frame(datos2)</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># datos2$TIPO &lt;- factor(datos2$TIPO, levels = c('0', '1'))</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># datos2$TIPO</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>confusion_matrix <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference =</span> <span class="fu">as.factor</span>(test1<span class="sc">$</span>TIPO), <span class="at">data =</span> predictions)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>confusion_matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] train-rmse:0.471153 
-[2] train-rmse:0.455449 
-[3] train-rmse:0.446108 
-[4] train-rmse:0.440091 
-[5] train-rmse:0.436661 
-[6] train-rmse:0.433228 
-[7] train-rmse:0.431335 
-[8] train-rmse:0.429849 
-[9] train-rmse:0.429005 
-[10]    train-rmse:0.427569 
-[11]    train-rmse:0.427057 
-[12]    train-rmse:0.425697 
-[13]    train-rmse:0.424216 
-[14]    train-rmse:0.422233 
-[15]    train-rmse:0.420568 
-[16]    train-rmse:0.414176 
-[17]    train-rmse:0.404802 
-[18]    train-rmse:0.399936 
-[19]    train-rmse:0.392608 
-[20]    train-rmse:0.388760 
-[21]    train-rmse:0.382496 
-[22]    train-rmse:0.380194 
-[23]    train-rmse:0.376848 
-[24]    train-rmse:0.375430 
-[25]    train-rmse:0.373703 
-[26]    train-rmse:0.371215 
-[27]    train-rmse:0.368904 
-[28]    train-rmse:0.368294 
-[29]    train-rmse:0.366861 
-[30]    train-rmse:0.366190 
-[31]    train-rmse:0.365722 
-[32]    train-rmse:0.365245 
-[33]    train-rmse:0.363567 
-[34]    train-rmse:0.362314 
-[35]    train-rmse:0.361006 
-[36]    train-rmse:0.360615 
-[37]    train-rmse:0.358957 
-[38]    train-rmse:0.356723 
-[39]    train-rmse:0.356256 
-[40]    train-rmse:0.355546 
-[41]    train-rmse:0.355010 
-[42]    train-rmse:0.354341 
-[43]    train-rmse:0.353240 
-[44]    train-rmse:0.352892 
-[45]    train-rmse:0.352489 
-[46]    train-rmse:0.352179 
-[47]    train-rmse:0.351344 
-[48]    train-rmse:0.351051 
-[49]    train-rmse:0.349960 
-[50]    train-rmse:0.349232 </code></pre>
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction    0    1
+         0 6871 1174
+         1 1348 2758
+                                          
+               Accuracy : 0.7924          
+                 95% CI : (0.7851, 0.7996)
+    No Information Rate : 0.6764          
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+                                          
+                  Kappa : 0.5313          
+                                          
+ Mcnemar's Test P-Value : 0.0005713       
+                                          
+            Sensitivity : 0.8360          
+            Specificity : 0.7014          
+         Pos Pred Value : 0.8541          
+         Neg Pred Value : 0.6717          
+             Prevalence : 0.6764          
+         Detection Rate : 0.5655          
+   Detection Prevalence : 0.6621          
+      Balanced Accuracy : 0.7687          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># train1$TIPO &lt;- train$TIPO</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># datos.task &lt;- makeClassifTask(data = train1, target = "TIPO")</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rin2 &lt;- makeResampleDesc(method = "CV", iters = 10, predict = "both")</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># lrn &lt;- makeLearner("classif.xgboost", nrounds = 500, max_depth = 4, eta = 0.2254931)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># lc2 &lt;- generateLearningCurveData(</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   learners = lrn,</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   task = datos.task,</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   percs = seq(0.1, 1, by = 0.1),</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   measures = list(ber, setAggregation(ber, train.mean)),</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   resampling = rin2,</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   show.info = FALSE</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># p &lt;- plotLearningCurve(lc2, facet = "learner")</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># p + coord_cartesian(ylim = c(0, 1))</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># p</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 </section>
 <section id="random-forest" class="level2">
 <h2 class="anchored" data-anchor-id="random-forest">Random Forest</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set.seed(123)</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># modelo_rf &lt;- randomForest(TIPO ~ ., data = train, ntree = 100)</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># predicciones &lt;- predict(modelo_rf, test)</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># tabla_confusion &lt;- tle(pr</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>modelo_rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(TIPO <span class="sc">~</span> ., <span class="at">data =</span> train, <span class="at">ntree =</span> <span class="dv">100</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>predicciones <span class="ot">&lt;-</span> <span class="fu">predict</span>(modelo_rf, test)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>confusion_matrix <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference=</span>test<span class="sc">$</span>TIPO, <span class="at">data =</span> predicciones)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(confusion_matrix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction muerto vivo
+    muerto   3808  449
+    vivo      124 7770
+                                          
+               Accuracy : 0.9528          
+                 95% CI : (0.9489, 0.9565)
+    No Information Rate : 0.6764          
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+                                          
+                  Kappa : 0.8946          
+                                          
+ Mcnemar's Test P-Value : &lt; 2.2e-16       
+                                          
+            Sensitivity : 0.9685          
+            Specificity : 0.9454          
+         Pos Pred Value : 0.8945          
+         Neg Pred Value : 0.9843          
+             Prevalence : 0.3236          
+         Detection Rate : 0.3134          
+   Detection Prevalence : 0.3503          
+      Balanced Accuracy : 0.9569          
+                                          
+       'Positive' Class : muerto          
+                                          </code></pre>
+</div>
 </div>
 <section id="parameter-tuning" class="level3">
 <h3 class="anchored" data-anchor-id="parameter-tuning">Parameter tuning</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># control &lt;- trainControl(method = "cv", number = 5)</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ntree_valores &lt;- c(50, 100, 150, 200, 250)</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ajuste &lt;- train(TIPO ~ ., data = train, method = "rf", trControl = control,</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                 tuneGrid = data.frame(ntree = ntree_valores))</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(ajuste)</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># mejor_ntree &lt;- ajuste$bestTune$ntree</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># predicciones, test$TIPO)</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># print(tabla_confusion)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>classifier <span class="ot">&lt;-</span> <span class="fu">makeClassifTask</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>train, </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">target=</span><span class="st">"TIPO"</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>param_grid <span class="ot">&lt;-</span> <span class="fu">makeParamSet</span>(<span class="fu">makeDiscreteParam</span>(<span class="st">"ntree"</span>,<span class="at">values=</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">300</span>, <span class="at">by =</span> <span class="dv">25</span>)))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>control_grid <span class="ot">&lt;-</span> <span class="fu">makeTuneControlGrid</span>()</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>resample <span class="ot">&lt;-</span> <span class="fu">makeResampleDesc</span>(<span class="st">"CV"</span>, <span class="at">iters =</span> 3L)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>measure <span class="ot">&lt;-</span> acc</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>dt_tuneparam <span class="ot">&lt;-</span> <span class="fu">tuneParams</span>(<span class="at">learner=</span><span class="st">'classif.randomForest'</span>, </span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a> <span class="at">task=</span>classifier, </span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a> <span class="at">resampling =</span> resample,</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a> <span class="at">measures =</span> measure,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a> <span class="at">par.set=</span>param_grid, </span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a> <span class="at">control=</span>control_grid, </span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a> <span class="at">show.info =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune] Started tuning learner classif.randomForest for parameter set:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>          Type len Def                                   Constr Req Tunable
+ntree discrete   -   - 0,25,50,75,100,125,150,175,200,225,25...   -    TRUE
+      Trafo
+ntree     -</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>With control class: TuneControlGrid</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Imputation value: -0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] Setting hyperpars failed: Error in setHyperPars2.Learner(learner, insert(par.vals, args)) : 
+  0 is not feasible for parameter 'ntree'!</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 1: ntree=0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 1: acc.test.mean=      NA; time: 0.0 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 2: ntree=25</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 2: acc.test.mean=0.9492452; time: 0.0 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 3: ntree=50</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 3: acc.test.mean=0.9517142; time: 0.0 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 4: ntree=75</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 4: acc.test.mean=0.9518552; time: 0.1 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 5: ntree=100</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 5: acc.test.mean=0.9524901; time: 0.1 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 6: ntree=125</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 6: acc.test.mean=0.9521726; time: 0.1 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 7: ntree=150</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 7: acc.test.mean=0.9530897; time: 0.1 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 8: ntree=175</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 8: acc.test.mean=0.9527017; time: 0.1 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 9: ntree=200</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 9: acc.test.mean=0.9524901; time: 0.1 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 10: ntree=225</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 10: acc.test.mean=0.9532660; time: 0.2 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 11: ntree=250</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 11: acc.test.mean=0.9531250; time: 0.2 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 12: ntree=275</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 12: acc.test.mean=0.9528781; time: 0.2 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-x] 13: ntree=300</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune-y] 13: acc.test.mean=0.9532308; time: 0.2 min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Tune] Result: ntree=225 : acc.test.mean=0.9532660</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>result_hyperparam <span class="ot">&lt;-</span> <span class="fu">generateHyperParsEffectData</span>(dt_tuneparam, <span class="at">partial.dep =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>best_parameters <span class="ot">=</span> <span class="fu">setHyperPars</span>(</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">makeLearner</span>(<span class="st">"classif.randomForest"</span>), </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">par.vals =</span> dt_tuneparam<span class="sc">$</span>x</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>best_model <span class="ot">=</span> <span class="fu">train</span>(best_parameters, classifier)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>best_params <span class="ot">&lt;-</span> <span class="fu">getHyperPars</span>(best_model<span class="sc">$</span>learner)</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>best_params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$ntree
+[1] 225</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># datos.task = makeClassifTask(data = train, target = "TIPO")</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="co"># rin2 = makeResampleDesc(method = "CV", iters = 10, predict = "both")</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co"># lrn = makeLearner("classif.randomForest", ntree = 500)</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># lc2 = generateLearningCurveData(learners = lrn, task = datos.task,</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                                     percs = seq(0.1, 1, by = 0.1),</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                                     measures = list(ber, setAggregation(ber, train.mean)), resampling = rin2,</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co">#                                     show.info = FALSE)</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a><span class="co"># plotLearningCurve(lc2, facet = "learner")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
