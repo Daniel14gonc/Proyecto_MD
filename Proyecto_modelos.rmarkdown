@@ -1,0 +1,404 @@
+---
+title: "Proyecto"
+author: "Diego Franco, Daniel Gonzalez, Angel Carrera"
+format: html
+editor: visual
+---
+
+```{r echo=F, include=FALSE}
+library(nortest)
+library(dplyr)
+library(hopkins)
+library(factoextra)
+library(ggrepel)
+library(cluster)
+library(flexclust)
+library(FeatureImpCluster)
+library(stringr)
+library(tidyr)
+library(stats)
+library(graphics)
+library(NbClust)
+library(mclust)
+library(GGally)
+library(corrplot)
+library(caret)
+library(ggplot2)
+library(kableExtra)
+library(e1071)
+library(rpart)
+library(rpart.plot)
+library(naivebayes)
+library(randomForest)
+library(RColorBrewer)
+library(ca)
+library(vcd)
+library(xgboost)
+library(mlr)
+library(glmnet)
+```
+
+```{r echo=F, include=FALSE}
+datos <- read.csv("defun_nac.csv")
+```
+
+
+### 1. Análsis de NA y limpieza
+
+Los datos tienen un encoding en el que se pone un número (como 99 o 999) para indicar que no se tiene información. Por lo tanto es necesario reemplazar estos números por NA.
+
+
+```{r echo=F}
+datos$SEXO <- ifelse(datos$SEXO == 9, NA, datos$SEXO)
+datos$SEMGES <- ifelse(datos$SEMGES == 99, NA, datos$SEMGES)
+datos$EDADM <- ifelse(datos$EDADM == 999, NA, datos$EDADM)
+datos$DEPREM <- ifelse(datos$DEPREM == 9999, NA, datos$DEPREM)
+datos$MUPREM <- ifelse(datos$MUPREM == 9999, NA, datos$MUPREM)
+datos$ESCIVM <- ifelse(datos$ESCIVM == 9, NA, datos$ESCIVM)
+datos$ESCOLAM <- ifelse(datos$ESCOLAM == 9, NA, datos$ESCOLAM)
+datos$SITIOOCU <- ifelse(datos$SITIOOCU == 9, NA, datos$SITIOOCU)
+datos$TOHITE <- ifelse(datos$TOHITE == 99, NA, datos$TOHITE)
+datos$TOHINM <- ifelse(datos$TOHINM == 99, NA, datos$TOHINM)
+datos$TOHIVI <- ifelse(datos$TOHIVI == 99, NA, datos$TOHIVI)
+```
+
+
+Además, también se tienen muchas variables con valores numéricos pero que son cualitativas. Por lo tanto, se conviertieron en factores.
+
+
+```{r echo=F}
+cualitativas <- c('DEPREG', 'MUPREG', 'MESREG', 'AÑOREG', 'DEPOCU', 'MUPOCU', 'SEXO', 'DIAOCU', 'MESOCU', 'TIPAR', 'DEPREM', 'MUPREM', 'ESCIVM', 'ESCOLAM', 'ASISREC', 'SITIOOCU', 'TIPO')
+datos[, cualitativas] <- lapply(datos[, cualitativas], as.factor)
+```
+
+
+## Eliminación de variables no significativas
+
+
+```{r}
+datos <- na.omit(datos)
+datos <- select(datos, -SEMGES, -MUPREG, -MUPOCU, -DEPOCU, -MUPREM, -DEPREG, -DEPREM, -TOHITE, -AÑOREG)
+# colnames(datos)[2] <- 'ANOREG'
+```
+
+
+## Creación de train y test
+
+
+```{r}
+porcentaje <- 0.7
+set.seed(123)
+
+corte <- sample(nrow(datos), nrow(datos) * porcentaje)
+train <- datos[corte, ]
+test <- datos[-corte, ]
+```
+
+
+## Datos necesarios para SVM y XGBoost
+
+
+```{r}
+
+set.seed(123)
+data <- datos
+cualitativas2 <- c('MESREG', 'AÑOREG', 'SEXO', 'DIAOCU', 'MESOCU', 'TIPAR', 'ESCIVM', 'ESCOLAM', 'ASISREC', 'SITIOOCU')
+cualitativas2_indices <- which(colnames(data) %in% cualitativas2)
+data$TIPO <- ifelse(data$TIPO == "muerto", 1, 0)
+
+encoding_model <- dummyVars(~., data = data[, cualitativas2_indices], fullRank = TRUE)
+
+encoded_data <- predict(encoding_model, newdata = data[, cualitativas2_indices])
+
+final_data <- cbind(data[, !cualitativas2_indices], encoded_data)
+final_data$TIPO <- data$TIPO
+
+
+
+porcentaje <- 0.7
+
+corte <- sample(nrow(final_data), nrow(final_data) * porcentaje)
+train1 <- final_data[corte, ]
+test1 <- final_data[-corte, ]
+
+```
+
+
+## SVM
+
+
+```{r}
+library(dplyr)
+# Dividir los datos en conjuntos de entrenamiento y prueba
+
+# modeloSVM <- svm(TIPO~., data = train, kernel = "linear", cost = 10, gamma = 0.1)
+modeloSVM <- readRDS("./modelos/modeloSVM.rds")
+print(modeloSVM)
+
+svmpredicciones <- predict(modeloSVM, test)
+svmConfusionMatrix <- confusionMatrix(svmpredicciones, test$TIPO)
+print(svmConfusionMatrix)
+
+# saveRDS(modeloSVM, "./modelos/modeloSVM.rds")
+```
+
+```{r}
+# library(mlr)
+# library(ggplot2)
+
+# # Paso 1: Cargar los datos y crear la tarea
+# train1$TIPO <- train$TIPO
+# datos.task <- makeClassifTask(data = train1, target = "TIPO")
+
+# # Paso 2: Definir la configuración de la validación cruzada
+# rin2 <- makeResampleDesc(method = "CV", iters = 10, predict = "both")
+
+# # Paso 3: Definir el clasificador SVM
+# lrn <- makeLearner("classif.svm", kernel = "radial", cost = 1, gamma = 0.1)
+
+# # Paso 4: Generar los datos de la curva de aprendizaje
+# lc2 <- generateLearningCurveData(
+#   learners = lrn,
+#   task = datos.task,
+#   percs = seq(0.1, 1, by = 0.1),
+#   measures = list(ber, setAggregation(ber, train.mean)),
+#   resampling = rin2,
+#   show.info = FALSE
+# )
+
+# # Paso 5: Graficar la curva de aprendizaje
+# p <- plotLearningCurve(lc2, facet = "learner")
+# p
+
+```
+
+```{r}
+folds <- createFolds(train$TIPO, k = 25, list = TRUE, returnTrain = TRUE)
+    
+    rmse_train <- vector(length = length(folds))
+    rmse_test <- vector(length = length(folds))
+
+   
+    for (i in 1:length(folds)){
+        train_data <- train[folds[[i]],]
+        test_data <- train[-folds[[i]],]
+
+        pred_train <- predict(modeloSVM, newdata = train_data )
+        pred <- predict(modeloSVM, newdata = test_data)
+
+        rmse_train[i] <- confusionMatrix(pred_train, train_data$TIPO)$overall["Accuracy"]
+        rmse_test[i] <- confusionMatrix(pred, test_data$TIPO)$overall["Accuracy"]
+    }
+
+    rmse_df <- data.frame(
+  Fold = 1:length(folds),
+  RMSE_Train = rmse_train,
+  RMSE_Test = rmse_test
+)
+
+# Crear el gráfico de línea
+ggplot(rmse_df, aes(x = Fold)) +
+  geom_line(aes(y = RMSE_Train, color = "Conjunto de Entrenamiento")) +
+  geom_line(aes(y = RMSE_Test, color = "Conjunto de Prueba")) +
+  labs(title = "Valores de RMSE en la validación cruzada",
+       x = "Fold",
+       y = "RMSE") +
+  scale_color_manual(values = c("Conjunto de Entrenamiento" = "blue", "Conjunto de Prueba" = "red")) +
+  theme_minimal()
+```
+
+
+## Red neuronal
+
+
+```{r}
+porcentaje <- 0.5
+corte <- sample(nrow(test), nrow(test) * porcentaje)
+test2 <- test[corte, ]
+validation2 <- test[-corte,]
+
+
+
+library(nnet)
+nnet_model <- nnet(TIPO ~ ., data = train, size = 5, softmax = FALSE)
+
+# Make predictions on the test set
+predictions1 <- as.factor(predict(nnet_model, newdata = test2, type = "class"))
+predictions2 <- as.factor(predict(nnet_model, newdata = validation2, type = "class"))
+
+confusion_matrix <- confusionMatrix(reference = test2$TIPO, data = predictions1)
+confusion_matrix2 <- confusionMatrix(reference = validation2$TIPO, data = predictions2)
+
+confusion_matrix
+
+confusion_matrix2
+
+```
+
+```{r}
+datos.task = makeClassifTask(data = train, target = "TIPO")
+rin2 = makeResampleDesc(method = "CV", iters = 10, predict = "both")
+lrn = makeLearner("classif.nnet", size = 5, decay = 1e-4, maxit = 1000, trace = FALSE)
+lc2 = generateLearningCurveData(learners = lrn, task = datos.task,
+                                    percs = seq(0.1, 1, by = 0.1),
+                                    measures = list(ber, setAggregation(ber, train.mean)), resampling = rin2,
+                                    show.info = FALSE)
+plotLearningCurve(lc2, facet = "learner")
+```
+
+
+## XGBoost
+
+### Parameter tunning
+
+
+```{r}
+set.seed(123)
+TIPO_temp <- train1$TIPO
+train1$TIPO <- train$TIPO
+task <- makeClassifTask(data = train1, target = "TIPO")
+param_grid <- makeParamSet(
+  makeDiscreteParam("nrounds", values = seq(100, 500, by = 20)),
+  makeIntegerParam("max_depth", lower = 3, upper = 10),
+  makeNumericParam("eta", lower = 0.01, upper = 0.3)
+)
+control_tune <- makeTuneControlRandom(maxit = 30)
+resampling <- makeResampleDesc("CV", iters = 5)
+measure <- acc
+tuned_model <- tuneParams(
+  learner = "classif.xgboost",  # For classification, use "classif.xgboost"; for regression, use "regr.xgboost"
+  task = task,
+  resampling = resampling,
+  measures = measure,
+  par.set = param_grid,
+  control = control_tune,
+  show.info = TRUE
+)
+
+best_params <- tuned_model$x
+best_params
+```
+
+```{r}
+train1$TIPO <- TIPO_temp
+xgb_model <- xgboost(data = as.matrix(train1[, -which(colnames(train1) == "TIPO")]), 
+                     label = train1[, c('TIPO')],
+                     nrounds = 500, max_depth=4, eta=0.2254931, verbose=0)
+
+# Make predictions
+predictions <- predict(xgb_model, as.matrix(test1[, -which(colnames(test1) == "TIPO")]))
+
+predictions <- ifelse(predictions > 0.5, 1, 0)
+predictions <- factor(predictions)
+# datos2 <- as.data.frame(datos2)
+# datos2$TIPO <- factor(datos2$TIPO, levels = c('0', '1'))
+# datos2$TIPO
+confusion_matrix <- confusionMatrix(reference = as.factor(test1$TIPO), data = predictions)
+confusion_matrix
+```
+
+```{r}
+train1$TIPO <- train$TIPO
+datos.task <- makeClassifTask(data = train1, target = "TIPO")
+rin2 <- makeResampleDesc(method = "CV", iters = 10, predict = "both")
+lrn <- makeLearner("classif.xgboost", nrounds = 500, max_depth = 4, eta = 0.2254931)
+lc2 <- generateLearningCurveData(
+  learners = lrn,
+  task = datos.task,
+  percs = seq(0.1, 1, by = 0.1),
+  measures = list(ber, setAggregation(ber, train.mean)),
+  resampling = rin2,
+  show.info = FALSE
+)
+p <- plotLearningCurve(lc2, facet = "learner")
+p
+```
+
+
+## Random Forest
+
+
+```{r}
+set.seed(123)
+modelo_rf <- randomForest(TIPO ~ ., data = train, ntree = 100)
+
+
+predicciones <- predict(modelo_rf, test)
+
+
+confusion_matrix <- confusionMatrix(reference=test$TIPO, data = predicciones)
+print(confusion_matrix)
+```
+
+
+### Parameter tuning
+
+
+```{r}
+classifier <- makeClassifTask(
+    data=train, 
+    target="TIPO"
+)
+
+param_grid <- makeParamSet(makeDiscreteParam("ntree",values= seq(0, 300, by = 25)))
+
+control_grid <- makeTuneControlGrid()
+
+resample <- makeResampleDesc("CV", iters = 3L)
+
+measure <- acc
+
+set.seed(123)
+dt_tuneparam <- tuneParams(learner='classif.randomForest', 
+ task=classifier, 
+ resampling = resample,
+ measures = measure,
+ par.set=param_grid, 
+ control=control_grid, 
+ show.info = TRUE)
+
+result_hyperparam <- generateHyperParsEffectData(dt_tuneparam, partial.dep = TRUE)
+
+best_parameters = setHyperPars(
+    makeLearner("classif.randomForest"), 
+    par.vals = dt_tuneparam$x
+)
+
+best_model = train(best_parameters, classifier)
+best_params <- getHyperPars(best_model$learner)
+best_params
+```
+
+```{r warning=FALSE, message=FALSE}
+datos.task = makeClassifTask(data = train, target = "TIPO")
+rin2 = makeResampleDesc(method = "CV", iters = 10, predict = "both")
+lrn = makeLearner("classif.randomForest", ntree = 500)
+lc2 = generateLearningCurveData(learners = lrn, task = datos.task,
+                                    percs = seq(0.1, 1, by = 0.1),
+                                    measures = list(ber, setAggregation(ber, train.mean)), resampling = rin2,
+                                    show.info = FALSE)
+plotLearningCurve(lc2, facet = "learner")
+```
+
+
+## Regresión logística regularizada
+
+
+```{r}
+
+X_train <- as.matrix(select(train1, -TIPO))
+y_train <- as.matrix(train1$TIPO)
+
+X_test <- as.matrix(select(test1, -TIPO))
+y_test <- as.matrix(test1$TIPO)
+
+ridge_model <- glmnet(X_train, y_train, family = "binomial", alpha = 1, lambda = 0)
+
+# Realizar predicciones en los datos de prueba
+y_pred <- predict(ridge_model, newx = X_test, s = "lambda.min", type = "response")
+y_pred <- ifelse(y_pred > 0.5, 1, 0)
+
+cf <- confusionMatrix(reference = as.factor(test1$TIPO), data = as.factor(y_pred))
+cf
+```
+
