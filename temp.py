@@ -121,14 +121,17 @@ for year in years:
 df_defunc = pd.concat(defunc, ignore_index=True)
 df_born = pd.concat(born, ignore_index=True)
 
-df_born = df_born.sample(n=df_defunc.shape[0], random_state=123)
+print(df_born.shape)
+print(df_defunc.shape)
 
-df_born = df_born.applymap(lambda x: remove_accents(x) if isinstance(x, str) else x)
+# df_born = df_born.sample(n=df_defunc.shape[0], random_state=123)
 
-replace_encoding(df_born)
+# df_born = df_born.applymap(lambda x: remove_accents(x) if isinstance(x, str) else x)
 
-df = pd.concat([df_defunc, df_born], ignore_index=True)
+# replace_encoding(df_born)
 
-print(df_defunc.shape[0])
+# df = pd.concat([df_defunc, df_born], ignore_index=True)
 
-df_born.to_csv("defunciones_fetales3.csv", index=False)
+# print(df_defunc.shape[0])
+
+# df_born.to_csv("defunciones_fetales3.csv", index=False)

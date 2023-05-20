@@ -36,6 +36,7 @@ library(vcd)
 library(xgboost)
 library(mlr)
 library(glmnet)
+library(nnet)
 ```
 
 ```{r echo=F, include=FALSE}
@@ -46,15 +47,9 @@ datos <- read.csv("defun_nac.csv")
 
 ## 1. Definición de variable respuesta
 
-La variable por utilizar será **TIPO**, la cual indica si un parto terminó en una defunción fetal
-o en un nacimiento. Debido a que la investigación de este trabaja está orientada a crear una
-herramienta que permita ayudar a identificar partos potencialmente problemáticos, se decidió
-usar esta variable como la respuesta. Esto permitirá saber, dadas las condiciones de una mujer
-embarazada, si tiene algún riesgo.
+La variable por utilizar será **TIPO**, la cual indica si un parto terminó en una defunción fetal o en un nacimiento. Debido a que la investigación de este trabaja está orientada a crear una herramienta que permita ayudar a identificar partos potencialmente problemáticos, se decidió usar esta variable como la respuesta. Esto permitirá saber, dadas las condiciones de una mujer embarazada, si tiene algún riesgo.
 
-Cabe mencionar que esta variable no existía dentro del dataset inicial, sino que a la hora de
-hacer la unión entre los conjuntos de datos de nacimientos y defunciones se indicó de qué
-conjunto de datos era proveniente cada observación.
+Cabe mencionar que esta variable no existía dentro del dataset inicial, sino que a la hora de hacer la unión entre los conjuntos de datos de nacimientos y defunciones se indicó de qué conjunto de datos era proveniente cada observación.
 
 ### 1.1 Limpieza de datos
 
@@ -84,7 +79,8 @@ datos[, cualitativas] <- lapply(datos[, cualitativas], as.factor)
 ```
 
 ## Eliminación de variables no significativas
-Hay ciertos años que no tienen todas las variables que años mas recientes tienen entonces para tener una mayor covertura de años se eliminan las variables que no tienen datos en todos los años. 
+
+Hay ciertos años que no tienen todas las variables que años mas recientes tienen entonces para tener una mayor covertura de años se eliminan las variables que no tienen datos en todos los años.
 
 ```{r}
 datos <- na.omit(datos)
@@ -104,7 +100,8 @@ corte <- sample(nrow(datos), nrow(datos) * porcentaje)
 train <- datos[corte, ]
 test <- datos[-corte, ]
 ```
-Para obtener los conjuntos de entrenamiento y prueba, se utilizó un método de división aleatoria. 
+
+Para obtener los conjuntos de entrenamiento y prueba, se utilizó un método de división aleatoria.
 
 En este caso, se dividió el conjunto de datos en un 70% para entrenamiento y un 30% para pruebas. Esto significa que el 70% de las muestras se utilizaron para entrenar el modelo y el 30% restante se reservaron para evaluar el rendimiento del modelo en datos no vistos.
 
@@ -182,10 +179,18 @@ test1 <- final_data[-corte, ]
 # print(best.model)
 ```
 
-
 Se obtuvo del parameter tuning que el mejor kernel es el lineal, con costo de 10 y gamma de 0.1.
 
 #### 4.1.2 Curva de aprendizaje
+
+```{r}
+library(dplyr)
+# Dividir los datos en conjuntos de entrenamiento y prueba
+
+# modeloSVM <- svm(TIPO~., data = train, kernel = "linear", cost = 10, gamma = 0.1)
+modeloSVM <- readRDS("./modelos/modeloSVM.rds")
+```
+
 ```{r}
 folds <- createFolds(train$TIPO, k = 25, list = TRUE, returnTrain = TRUE)
     
@@ -221,14 +226,11 @@ ggplot(rmse_df, aes(x = Fold)) +
   theme_minimal()
 ```
 
+Se puede observar un gráfico en donde los datos no son representativos, esto porque las líneas se cruzan entre sí y no hay una relación clara entre los datos de entrenamiento y prueba.
+
 #### 4.1.3 Predicciones
 
 ```{r}
-library(dplyr)
-# Dividir los datos en conjuntos de entrenamiento y prueba
-
-# modeloSVM <- svm(TIPO~., data = train, kernel = "linear", cost = 10, gamma = 0.1)
-modeloSVM <- readRDS("./modelos/modeloSVM.rds")
 print(modeloSVM)
 
 svmpredicciones <- predict(modeloSVM, test)
@@ -255,19 +257,19 @@ tuned_model <- caret::train(TIPO ~ ., data = train, method = "nnet",
 
 best_size <- tuned_model$bestTune$size
 best_decay <- tuned_model$bestTune$decay
-best_model <- nnet(y ~ ., data = train_data, size = best_size, decay = best_decay)
 print(best_size)
 print(best_decay)
 
 ```
 
-El tuneo de parámetros se realizó con una sola capa. Se usaron topologías de 5, 10 y 15 neuronas. Aparte, se evaluó un decay de 0.1, 0.01 y 0.001. Luego de ejecutar el procedimiento, se obtuvo que el mejor modelo usa 10 nueronas y un decay de 0.01.
+El tuneo de parámetros se realizó con una sola capa. Se usaron topologías de 5, 10 y 15 neuronas. Aparte, se evaluó un decay de 0.1, 0.01 y 0.001. Luego de ejecutar el procedimiento, se obtuvo que el mejor modelo usa 10 neuronas y un decay de 0.01. Sin embargo, este modelo dió overfitting. Cuando se usó 0.0001 de decay y 5 neuronas, no hubo overfitting.
 
 #### 4.2.3 Creación de curva de aprendizaje
+
 ```{r}
 datos.task = makeClassifTask(data = train, target = "TIPO")
 rin2 = makeResampleDesc(method = "CV", iters = 10, predict = "both")
-lrn = makeLearner("classif.nnet", size = 10, decay = 0.01, maxit = 1000, trace = FALSE)
+lrn = makeLearner("classif.nnet", size = 5, decay = 0.0001, maxit = 1000, trace = FALSE)
 lc2 = generateLearningCurveData(learners = lrn, task = datos.task,
                                     percs = seq(0.1, 1, by = 0.1),
                                     measures = list(ber, setAggregation(ber, train.mean)), resampling = rin2,
@@ -278,14 +280,27 @@ plotLearningCurve(lc2, facet = "learner")
 Como se puede observar en la gráfica, la curva de test y la curva de train, tienen un comportamiento muy similar. A pesar de que hay diversos aumentos y disminuciones en las curvas, estas son muy cercanas. En conclusión, estas convergen, por lo que no se da overfitting.
 
 #### 4.2.4 Predicción y datos de validación
+
+```{r}
+porcentaje <- 0.5
+
+nnet_model <- nnet(TIPO ~ ., data = train, size=5, decay=0.0001, softmax = FALSE)
+
+# Make predictions on the test set
+predictions1 <- as.factor(predict(nnet_model, newdata = test, type = "class"))
+
+confusion_matrix <- confusionMatrix(reference = test$TIPO, data = predictions1)
+
+confusion_matrix
+```
+
 ```{r}
 porcentaje <- 0.5
 corte <- sample(nrow(test), nrow(test) * porcentaje)
 test2 <- test[corte, ]
 validation2 <- test[-corte,]
 
-library(nnet)
-nnet_model <- nnet(TIPO ~ ., data = train, size=10, decay=0.01, softmax = FALSE)
+nnet_model <- nnet(TIPO ~ ., data = train, size=5, decay=0.0001, softmax = FALSE)
 
 # Make predictions on the test set
 predictions1 <- as.factor(predict(nnet_model, newdata = test2, type = "class"))
@@ -311,6 +326,7 @@ Se usó un set de datos de prueba y uno validación para poder evaluar el overfi
 ### 4.3 XGBoost
 
 #### 4.3.1 Parameter tunning
+
 ```{r}
 set.seed(123)
 TIPO_temp <- train1$TIPO
@@ -337,9 +353,11 @@ tuned_model <- tuneParams(
 best_params <- tuned_model$x
 best_params
 ```
- Despues de realizar el parameter tunning se obtuvo que los mejores parametros son: nrounds = 500, max_depth = 4, eta = 0.2254931. Esto se debe a que se obtuvo el mejor accuracy con estos parametros.
+
+Despues de realizar el parameter tunning se obtuvo que los mejores parametros son: nrounds = 500, max_depth = 4, eta = 0.2254931. Esto se debe a que se obtuvo el mejor accuracy con estos parametros.
 
 #### 4.3.2 Curva de aprendizaje
+
 ```{r}
 train1$TIPO <- train$TIPO
 datos.task <- makeClassifTask(data = train1, target = "TIPO")
@@ -356,9 +374,11 @@ lc2 <- generateLearningCurveData(
 p <- plotLearningCurve(lc2, facet = "learner")
 p
 ```
+
 Observando la grafica de aprendizaje se puede observar que el modelo no tiene overfitting ya que aunque las curvas no son iguales, estas convergen.
 
 #### 4.3.3 Predicciones y datos de validación
+
 ```{r}
 train1$TIPO <- TIPO_temp
 xgb_model <- xgboost(data = as.matrix(train1[, -which(colnames(train1) == "TIPO")]), 
@@ -376,6 +396,7 @@ predictions <- factor(predictions)
 confusion_matrix <- confusionMatrix(reference = as.factor(test1$TIPO), data = predictions)
 confusion_matrix
 ```
+
 ```{r}
 f1_score <- confusion_matrix$byClass["F1"]
 f1_score
@@ -422,8 +443,8 @@ best_params
 
 Luego de realizar el tuneo de los parametros y ajustar los parametros de este modelo, se determinó que la mejor cantidad de árboles para nuestro conjunto de datos y objetivos específicos es 500. Esta elección se basó en un proceso de evaluación riguroso que consideró medidas de rendimiento y garantizó un equilibrio adecuado entre precisión y eficiencia computacional.
 
-
 #### 4.4.2 Curva de aprendizaje
+
 ```{r warning=FALSE, message=FALSE}
 datos.task = makeClassifTask(data = train, target = "TIPO")
 rin2 = makeResampleDesc(method = "CV", iters = 10, predict = "both")
@@ -434,6 +455,7 @@ lc2 = generateLearningCurveData(learners = lrn, task = datos.task,
                                     show.info = FALSE)
 plotLearningCurve(lc2, facet = "learner")
 ```
+
 Como se puede observar en la grafica que muestra la curva de aprendizaje el error de entrenamiento sigue disminuyendo a medida que se agregan más datos, pero el error de validación se estabiliza, sugiriendo asi que el modelo está memorizando los datos de entrenamiento y no generalizando bien a nuevos datos. Indicando así que el modelo presenta overfitting.
 
 #### 4.4.3 Predicciones
@@ -465,8 +487,8 @@ predicciones <- predict(modelo_rf, test2)
 predicciones2 <- predict(modelo_rf, validation2)
 
 
-confusion_matrix <- confusionMatrix(reference=test$TIPO, data = predicciones)
-confusion_matrix2 <- confusionMatrix(reference=test$TIPO, data = predicciones2)
+confusion_matrix <- confusionMatrix(reference=test2$TIPO, data = predicciones)
+confusion_matrix2 <- confusionMatrix(reference=validation2$TIPO, data = predicciones2)
 print(confusion_matrix)
 print(confusion_matrix)
 ```
@@ -496,6 +518,7 @@ best_lambda
 Luego de realizar el tuneo de parámetros se obtuvo que los mejores parámetros son un alpha de 1 y un lambda de 0.1.
 
 #### 4.5.2 Curva de aprendizaje
+
 ```{r}
 datos.task = makeClassifTask(data = train, target = "TIPO")
 rin2 = makeResampleDesc(method = "CV", iters = 10, predict = "both")
@@ -533,52 +556,50 @@ f1_score <- cf$byClass["F1"]
 f1_score
 ```
 
-
 ## 5. Discusión de resultados
 
 Tras haber realizado las predicciones con cada modelo obtuvimos los siguientes resultados:
 
 ### SVM
 
-- Accuracy: 0.9393
-- Sensitivity: 1
-- Specificity: 0.9103
-- F1: 0.9143
+-   Accuracy: 0.9393
+-   Sensitivity: 1
+-   Specificity: 0.9103
+-   F1: 0.9143
 
 ### Red Neuronal
 
-- Accuracy: 0.9391
-- Sensitivity: 0.9894
-- Specificity: 0.9148
-- F1: 0.9137
+-   Accuracy: 0.9391
+-   Sensitivity: 0.9894
+-   Specificity: 0.9148
+-   F1: 0.9137
 
 ### XGBoost
 
-- Accuracy: 0.7924
-- Sensitivity: 0.836
-- Specificity: 0.7014
-- F1: 0.8449
-  
+-   Accuracy: 0.7924
+-   Sensitivity: 0.836
+-   Specificity: 0.7014
+-   F1: 0.8449
+
 ### Random Forest
 
-- Accuracy: 0.9531
-- Sensitivity: 0.9687
-- Specificity: 0.9456
-- F1: 0.9303
+-   Accuracy: 0.9531
+-   Sensitivity: 0.9687
+-   Specificity: 0.9456
+-   F1: 0.9303
 
 ### Regresión logística regularizada
 
-- Accuracy: 0.67
-- Sensitivity: 1
-- Specificity: 0
-- F1: 0.80697
+-   Accuracy: 0.67
+-   Sensitivity: 1
+-   Specificity: 0
+-   F1: 0.80697
 
 Cabe mencionar que de los modelos anteriores los únicos que no estan ni sobre ajustados ni infra ajustado son: **La red neuronal y XGBoost**
 
-Sobre la precisión de los diferentes modelos para poder predecir si el embarazo terminará siendo un aborto o si el embarazo se dara con normalidad, tenemos que el peor modelo fue la regresion logistica con un 0.67 de accuracy esto se pudo dar ya que este es un algoritmo de clasificación binaria por lo que la mejor metrica para evaluarlo no sería por medio del accuracy. Mientras que el mejor modelo fue el random forest con 0.95 de accuracy pero este es uno de los modelos que se encuentra sobre ajustado por lo que realmente no es un buen resultado para nuestra investigación, por la misma razón el modelo hace las predicciones con los patrones del dataset en especifico.
-Por otro lado de los modelos que **NO** se encuentran sobre ajustados tenemos que la red neuronal obtuvo un 0.93 de accuracy el cual fue superior al 0.79 de accuracy del XGBoost, por lo que el modelo que tuvo una precisión más alta y es significativo para la investigacion es **La red neuronal**.
+Sobre la precisión de los diferentes modelos para poder predecir si el embarazo terminará siendo un aborto o si el embarazo se dara con normalidad, tenemos que el peor modelo fue la regresion logistica con un 0.67 de accuracy esto se pudo dar ya que este es un algoritmo de clasificación binaria por lo que la mejor metrica para evaluarlo no sería por medio del accuracy. Mientras que el mejor modelo fue el random forest con 0.95 de accuracy pero este es uno de los modelos que se encuentra sobre ajustado por lo que realmente no es un buen resultado para nuestra investigación, por la misma razón el modelo hace las predicciones con los patrones del dataset en especifico. Por otro lado de los modelos que **NO** se encuentran sobre ajustados tenemos que la red neuronal obtuvo un 0.93 de accuracy el cual fue superior al 0.79 de accuracy del XGBoost, por lo que el modelo que tuvo una precisión más alta y es significativo para la investigacion es **La red neuronal**.
 
-Observando la capacidad de los modelos para predecir los verdaderos positivos (True Positive), se puede observar que el modelo que mejor predice los verdaderos positivos es la SVM y la regresion Logistica Regularizada, ambas con un valor de 1. Para la Regresion Logistica esto se puede deber a que su humbral este ajustado a los datos del data set y este marcando a todos los datos de una forma, agregado a desvalanceo que existe en los datos podria ser la razon del sobreajuste de este. Por otro lado tenemos tenemos que el XGBoost, con un valor de 0.836, esto se pudo dar ya que el modelo no logro capturar los patrones esenciales para casos positivos, o que el umbral utilizado para la clasificacion haya sido demasiado alto, lo que resulto en una menor tasa de verdaderos positivos. Por ultimo tenemos que el modelo que mejor pudo predecir los verdaderos positivos 
+Observando la capacidad de los modelos para predecir los verdaderos positivos (True Positive), se puede observar que el modelo que mejor predice los verdaderos positivos es la SVM y la regresion Logistica Regularizada, ambas con un valor de 1. Para la Regresion Logistica esto se puede deber a que su humbral este ajustado a los datos del data set y este marcando a todos los datos de una forma, agregado a desvalanceo que existe en los datos podria ser la razon del sobreajuste de este. Por otro lado tenemos tenemos que el XGBoost, con un valor de 0.836, esto se pudo dar ya que el modelo no logro capturar los patrones esenciales para casos positivos, o que el umbral utilizado para la clasificacion haya sido demasiado alto, lo que resulto en una menor tasa de verdaderos positivos. Por ultimo tenemos que el modelo que mejor pudo predecir los verdaderos positivos
 
 Al observar la identificación de los verdaderos negativos (specificity) de los modelos, se puede evidenciar que el que mejor desempeño tuvo fue el random forest con 0.9456. El peor modelo para identificar verdaderos negativos fue la regresión logística regularizada, con 0. Esto último se puede deber al umbral utilizado para identificar una clase de la otra, de forma que la mayoría de datos tenían una probabilidad superior. Otro factor que afecta es el ligero desbalance mencionado previamente en los datos. Por otra parte, el random forest pudo tener un muy buen desempeño gracias a su manejo de características irrelevantes del dataset. Además, su mismo overfitting hizo que entendiera las reglas importantes del dataset que le permitieran identificar los verdaderos falsos.
 
