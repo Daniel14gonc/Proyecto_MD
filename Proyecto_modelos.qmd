@@ -327,6 +327,7 @@ Se usó un set de datos de prueba y uno validación para poder evaluar el overfi
 
 #### 4.3.1 Parameter tunning
 
+
 ```{r}
 set.seed(123)
 TIPO_temp <- train1$TIPO
@@ -380,13 +381,15 @@ Observando la grafica de aprendizaje se puede observar que el modelo no tiene ov
 #### 4.3.3 Predicciones y datos de validación
 
 ```{r}
-train1$TIPO <- TIPO_temp
+# train1$TIPO <- TIPO_temp
 xgb_model <- xgboost(data = as.matrix(train1[, -which(colnames(train1) == "TIPO")]), 
                      label = train1[, c('TIPO')],
-                     nrounds = 500, max_depth=4, eta=0.2254931, verbose=0)
+                     nrounds = 500, max_depth=4, eta=0.2254931, verbose=0, objective = "binary:logistic")
 
 # Make predictions
 predictions <- predict(xgb_model, as.matrix(test1[, -which(colnames(test1) == "TIPO")]))
+
+head(predictions, 50)
 
 predictions <- ifelse(predictions > 0.5, 1, 0)
 predictions <- factor(predictions)
